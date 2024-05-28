@@ -3,7 +3,7 @@
       "module": "ESNext",
       "esModuleInterop": true,
       "target": "ESNext",
-      "moduleResolution": "Node",
+      "moduleResolution": "Bundler",
       "outDir": "dist",
       "forceConsistentCasingInFileNames": true,
       "noFallthroughCasesInSwitch": true,
@@ -11,7 +11,8 @@
       "strict": true,
       "noImplicitAny": true,
       "useUnknownInCatchVariables": false,
-      "inlineSourceMap": true
+      "inlineSourceMap": true,
+      
     },
     "ts-node": {
         "esm": true
