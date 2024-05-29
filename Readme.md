@@ -2,7 +2,7 @@
 
 
 # Real Time Chat Application
-  This application built using Node.js, Express, Socket.io, Postgres, RESTful Web Service.
+  This application built using Node.js, Express, Socket.io, Postgres, RESTful Web Service ,Typescript.
   
   
 
