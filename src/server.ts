@@ -2,6 +2,7 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import router from "./routes/index.routes.js";
 dotenv.config({ path: "./.env" });
 
 const PORT: string | number = process.env.PORT || 8000;
@@ -23,4 +24,4 @@ app.use(express.urlencoded({ extended: true, limit: "25kb" }));
 // cookie parse to excess cokkie
 app.use(cookieParser());
 // app.use router
-// app.use("/", router);
+app.use("/", router);
