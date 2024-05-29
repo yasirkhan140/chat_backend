@@ -2,7 +2,7 @@
 
 
 # Real Time Chat Application
-  This application built using Node.js, Express, Socket.io, Postgres, RESTful Web Service ,Typescript.
+  This application built using Node.js, Express, Socket.io, Postgres, RESTful Web Service.
   
   
 
@@ -45,4 +45,53 @@ Make sure you have Node.js and npm install.
     
   
   
+
+
+## Run Locally
+
+Clone the project
+
+```bash
+  git clone https://github.com/yasirkhan140/chat_backend
+```
+
+Go to the project directory
+
+```bash
+  cd chat_backend
+```
+
+Install dependencies
+
+```bash
+  npm install
+```
+
+Start the typescript watch
+
+```bash
+  npm run tsc
+```
+After tsc Start the server 
+
+```bash
+  npm run dev
+```
+
+
+## Tech Stack
+
+**Client:** React, Redux, TailwindCSS
+
+**Server:** Node, Express
+
+
+## 🛠 Skills
+Javascript, HTML, CSS,Node js postgres , express , socket.io...
+
+
+## 🔗 Links
+[![portfolio](https://img.shields.io/badge/my_portfolio-000?style=for-the-badge&logo=ko-fi&logoColor=white)](https://github.com/yasirkhan140/chat_backend)
+[![linkedin](https://img.shields.io/badge/linkedin-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/yasir-khan-699651204/)
+
 

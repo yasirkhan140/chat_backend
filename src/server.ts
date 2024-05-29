@@ -3,6 +3,7 @@ import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import router from "./routes/index.routes.js";
+import sequelize from "./db/db.js";
 dotenv.config({ path: "./.env" });
 
 const PORT: string | number = process.env.PORT || 8000;
@@ -11,6 +12,14 @@ const app = express();
 app.listen(PORT, () => {
   console.log("Server listen listen on " + PORT);
 });
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("connect successfully database");
+  })
+  .catch((err) => {
+    console.log(`error in connecting database ${err}`);
+  });
 app.use(
   cors({
     origin: process.env.CORS_ORIGIN,
