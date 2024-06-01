@@ -2,7 +2,6 @@ type ENV = "development" | "production" | "test";
 
 import configuration from "../config/config.js";
 import { Sequelize } from "sequelize";
-import User from "../models/index.js";
 const env: ENV = ["development", "production", "test"].includes(
   process.env.NODE_ENV as ENV
 )
@@ -24,9 +23,6 @@ const connection = () => {
     .then(async () => {
       let user = null;
       console.log("connect successfully database");
-      user = User.User;
-      await user.sync({ force: true });
-      console.log("table created successfully ");
     })
     .catch((err) => {
       console.log(`error in connecting database ${err}`);
