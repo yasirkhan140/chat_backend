@@ -1,21 +1,17 @@
 {
-    "compilerOptions": {
-      "module": "ESNext",
-      "esModuleInterop": true,
-      "target": "ESNext",
-      "moduleResolution": "Bundler",
-      "outDir": "dist",
-      "forceConsistentCasingInFileNames": true,
-      "noFallthroughCasesInSwitch": true,
-      "isolatedModules": false,
-      "strict": true,
-      "noImplicitAny": true,
-      "useUnknownInCatchVariables": false,
-      "inlineSourceMap": true,
-      
-    },
-    "ts-node": {
-        "esm": true
-    },
-    "lib": ["esnext"]
+  "compilerOptions": {
+    "module": "CommonJS",
+    "esModuleInterop": true,
+    "target": "ES2015",
+    "outDir": "dist",
+    "forceConsistentCasingInFileNames": true,
+    "noFallthroughCasesInSwitch": true,
+    "isolatedModules": false,
+    "strict": true,
+    "noImplicitAny": true,
+    "useUnknownInCatchVariables": false,
+    "inlineSourceMap": true
+  },
+
+  "lib": ["ES2015"]
 }

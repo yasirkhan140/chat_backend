@@ -5,7 +5,7 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 
 export const getAllUser = asyncHandler(async (req: Request, res: Response) => {
-  const users = await User.findAll();
+  const users = await User.findAll({ attributes: { exclude: ["password"] } });
   if (!users)
     return res
       .status(500)

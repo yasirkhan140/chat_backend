@@ -1,40 +1,60 @@
-module.exports = function (sequelize: any, DataTypes: any) {
-  const User = sequelize.define(
-    "User",
-    {
-      // Model attributes are defined here
-      id: {
-        type: DataTypes.INTEGER,
-        autoIncrement: true,
-        primaryKey: true,
-      },
-      firstName: {
-        type: DataTypes.STRING,
-        allowNull: false,
-      },
-      lastName: {
-        type: DataTypes.STRING,
-        // allowNull defaults to true
-      },
-      email: {
-        type: DataTypes.STRING,
-        allowNull: false,
-        unique: true,
-      },
-      password: {
-        type: DataTypes.STRING(64),
-        validate: {
-          is: /^[0-9a-f]{64}$/i,
+import { DataTypes } from "sequelize";
+import { sequelize } from "../db/db.js";
+const User = sequelize.define(
+  "User",
+  {
+    // Model attributes are defined here
+    id: {
+      type: DataTypes.INTEGER,
+      autoIncrement: true,
+      primaryKey: true,
+    },
+    firstName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    lastName: {
+      type: DataTypes.STRING,
+      // allowNull defaults to true
+    },
+    email: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      unique: { name: "email", msg: "Email alreay exits login" },
+    },
+    password: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      validate: {
+        notNull: {
+          msg: "password cannot be null",
         },
-        allowNull: true,
-      },
-      refreshToken: {
-        type: DataTypes.TEXT,
+        notEmpty: {
+          msg: "password cannot be empty",
+        },
       },
     },
-    {
-      timestamps: true,
-    }
-  );
-  return User;
-};
+    refreshToken: {
+      type: DataTypes.TEXT,
+    },
+    createdAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+    },
+    updatedAt: {
+      allowNull: false,
+      type: DataTypes.DATE,
+    },
+    deletedAt: {
+      type: DataTypes.DATE,
+    },
+  },
+  {
+    timestamps: true,
+    freezeTableName: true,
+    paranoid: true,
+    modelName: "user",
+  }
+);
+
+export default User;
