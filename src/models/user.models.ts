@@ -1,6 +1,18 @@
-import { DataTypes } from "sequelize";
+import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../db/db.js";
-const User = sequelize.define(
+interface UserAttributes {
+  id: number;
+  firstName: string;
+  lastName?: string;
+  email: string;
+  password: string;
+  refreshToken?: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+}
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+const User = sequelize.define<Model<UserAttributes, UserCreationAttributes>>(
   "User",
   {
     // Model attributes are defined here
@@ -54,6 +66,16 @@ const User = sequelize.define(
     freezeTableName: true,
     paranoid: true,
     modelName: "user",
+    hooks: {
+      beforeCreate(user, options) {
+        const typedUser = user as Model<
+          UserAttributes,
+          UserCreationAttributes
+        > &
+          UserAttributes;
+        typedUser.password;
+      },
+    },
   }
 );
 
