@@ -1,5 +1,6 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../db/db.js";
+import bcrypt from "bcrypt";
 interface UserAttributes {
   id: number;
   firstName: string;
@@ -11,7 +12,13 @@ interface UserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> {
+  methods?: {
+    isValidPassword: (password: string, hash: string) => Promise<boolean>;
+  };
+}
+type UserTpyedModel = Model<UserAttributes, UserCreationAttributes> &
+  UserAttributes;
 const User = sequelize.define<Model<UserAttributes, UserCreationAttributes>>(
   "User",
   {
@@ -66,17 +73,22 @@ const User = sequelize.define<Model<UserAttributes, UserCreationAttributes>>(
     freezeTableName: true,
     paranoid: true,
     modelName: "user",
+    // hooks for user create then run / before saving run
     hooks: {
-      beforeCreate(user, options) {
-        const typedUser = user as Model<
-          UserAttributes,
-          UserCreationAttributes
-        > &
-          UserAttributes;
-        typedUser.password;
+      beforeCreate(user: UserTpyedModel) {
+        encrptPassword(user);
+      },
+      beforeUpdate(user: UserTpyedModel) {
+        encrptPassword(user);
       },
     },
   }
 );
+// for password hash
+async function encrptPassword(typedUser: UserTpyedModel) {
+  if (typedUser.changed("password")) {
+    typedUser.password = await bcrypt.hash(typedUser.get("password"), 10);
+  }
+}
 
 export default User;

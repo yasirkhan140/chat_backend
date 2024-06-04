@@ -23,10 +23,6 @@ interface UserAttributes {
   lastName?: string;
   email: string;
   password: string;
-  refreshToken?: string;
-  createdAt: Date;
-  updatedAt: Date;
-  deletedAt?: Date;
 }
 export const createUser = asyncHandler(async (req: Request, res: Response) => {
   const { firstName, lastName, password, email }: UserAttributes = req.body;
