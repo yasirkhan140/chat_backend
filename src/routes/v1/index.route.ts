@@ -1,6 +1,6 @@
 import { Response, Router } from "express";
-import { ApiResponse } from "../../utils/ApiResponse.js";
-import userRoutes from "./user.routes.js";
+import { ApiResponse } from "../../utils/ApiResponse";
+import userRoutes from "./user.routes";
 const router = Router();
 // health route for check sevrer running status.
 router.get("/health", (_, res: Response) => {

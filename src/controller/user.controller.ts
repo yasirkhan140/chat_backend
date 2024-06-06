@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
-import { asyncHandler } from "../utils/asynHandler.js";
-import User from "../models/user.models.js";
-import { ApiError } from "../utils/ApiError.js";
-import { ApiResponse } from "../utils/ApiResponse.js";
+import { asyncHandler } from "../utils/asynHandler";
+import User from "../models/user.models";
+import { ApiError } from "../utils/ApiError";
+import { ApiResponse } from "../utils/ApiResponse";
 
 export const getAllUser = asyncHandler(async (req: Request, res: Response) => {
   const users = await User.findAll({ attributes: { exclude: ["password"] } });
@@ -67,4 +67,19 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
   return res
     .status(201)
     .json(new ApiResponse(201, user, "user created successfully"));
+});
+export const loginUser = asyncHandler(async (req: Request, res: Response) => {
+  const { email, password }: { email: string; password: string } = req.body;
+  if ([email, password].some((feild) => !feild || feild === "")) {
+    return res
+      .status(400)
+      .json(
+        new ApiError(
+          400,
+          "Email and password is required ",
+          "some feild is not send"
+        )
+      );
+  }
+  const user = await User.findOne({ where: { email } });
 });

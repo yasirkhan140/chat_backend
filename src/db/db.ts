@@ -2,7 +2,7 @@ type ENV = "development" | "production" | "test";
 
 import { Sequelize } from "sequelize";
 const env: ENV = (process.env.NODE_ENV as ENV) || "development";
-import * as configuration from "../config/config.js";
+import * as configuration from "../config/config";
 import Config from "../config/config";
 
 const dbEnv = configuration as Config;

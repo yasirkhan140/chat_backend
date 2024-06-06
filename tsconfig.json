@@ -2,7 +2,7 @@
   "compilerOptions": {
     "module": "CommonJS",
     "esModuleInterop": true,
-    "target": "ES2015",
+    "target": "ES6",
     "outDir": "dist",
     "forceConsistentCasingInFileNames": true,
     "noFallthroughCasesInSwitch": true,
@@ -13,5 +13,5 @@
     "inlineSourceMap": true
   },
 
-  "lib": ["ES2015"]
+  "lib": ["ES2015"],
 }

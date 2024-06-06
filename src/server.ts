@@ -2,8 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import cors from "cors";
 import cookieParser from "cookie-parser";
-import router from "./routes/index.routes.js";
-import connection from "./db/db.js";
+import router from "./routes/index.routes";
+import connection from "./db/db";
 dotenv.config({ path: "./.env" });
 
 const PORT: string | number = process.env.PORT || 8000;

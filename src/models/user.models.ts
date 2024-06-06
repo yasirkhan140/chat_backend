@@ -1,5 +1,5 @@
 import { DataTypes, Model, Optional } from "sequelize";
-import { sequelize } from "../db/db.js";
+import { sequelize } from "../db/db";
 import bcrypt from "bcrypt";
 interface UserAttributes {
   id: number;
@@ -12,14 +12,13 @@ interface UserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {
-  methods?: {
-    isValidPassword: (password: string, hash: string) => Promise<boolean>;
-  };
-}
-type UserTpyedModel = Model<UserAttributes, UserCreationAttributes> &
-  UserAttributes;
-const User = sequelize.define<Model<UserAttributes, UserCreationAttributes>>(
+interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+interface UserInstance
+  extends Model<UserAttributes, UserCreationAttributes>,
+    UserAttributes {}
+type UserTpyedModel = UserInstance;
+
+const User = sequelize.define<UserInstance>(
   "User",
   {
     // Model attributes are defined here
@@ -68,6 +67,7 @@ const User = sequelize.define<Model<UserAttributes, UserCreationAttributes>>(
       type: DataTypes.DATE,
     },
   },
+
   {
     timestamps: true,
     freezeTableName: true,
@@ -82,6 +82,14 @@ const User = sequelize.define<Model<UserAttributes, UserCreationAttributes>>(
         encrptPassword(user);
       },
     },
+    defaultScope: {
+      attributes: { exclude: ["password"] },
+    },
+    scopes: {
+      withPassword: {
+        attributes: undefined,
+      },
+    },
   }
 );
 // for password hash
@@ -90,5 +98,7 @@ async function encrptPassword(typedUser: UserTpyedModel) {
     typedUser.password = await bcrypt.hash(typedUser.get("password"), 10);
   }
 }
-
+// User.prototype.verifyPassword = async function (password: string) {
+//   return await bcrypt.compare(password, this.password);
+// };
 export default User;
