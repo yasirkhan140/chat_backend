@@ -1,6 +1,7 @@
 import { DataTypes, Model, Optional } from "sequelize";
 import { sequelize } from "../db/db";
 import bcrypt from "bcrypt";
+import jwt, { Secret } from "jsonwebtoken";
 interface UserAttributes {
   id: number;
   firstName: string;
@@ -16,7 +17,7 @@ interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
 interface UserInstance
   extends Model<UserAttributes, UserCreationAttributes>,
     UserAttributes {}
-type UserTpyedModel = UserInstance;
+export type UserTpyedModel = UserInstance;
 
 const User = sequelize.define<UserInstance>(
   "User",
@@ -101,4 +102,35 @@ async function encrptPassword(typedUser: UserTpyedModel) {
 // User.prototype.verifyPassword = async function (password: string) {
 //   return await bcrypt.compare(password, this.password);
 // };
+export const verifyPassword = async (password: string, hasPassword: string) => {
+  return await bcrypt.compare(password, hasPassword);
+};
+export const generateRefreshToken = (id: number) => {
+  return jwt.sign(
+    {
+      id: id,
+    },
+    process.env.REFRESH_TOKEN_SECRET as Secret,
+    {
+      expiresIn: process.env.REFRESH_TOKEN_EXPIRY as string,
+    }
+  );
+};
+export const generateAccessToken = (
+  id: number,
+  email: string,
+  name: string
+) => {
+  return jwt.sign(
+    {
+      id: id,
+      email: email,
+      name: name,
+    },
+    process.env.ACCESS_TOKEN_SECRET as Secret,
+    {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY as string,
+    }
+  );
+};
 export default User;

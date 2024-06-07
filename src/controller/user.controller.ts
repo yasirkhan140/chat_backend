@@ -1,8 +1,42 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asynHandler";
-import User from "../models/user.models";
+import User, {
+  UserTpyedModel,
+  generateAccessToken,
+  generateRefreshToken,
+  verifyPassword,
+} from "../models/user.models";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
+
+// genertae acces token and refresh  token
+const generateAccessAndRefereshTokens = async (userId: number) => {
+  try {
+    const findUser: UserTpyedModel | null = await User.findByPk(userId);
+    if (findUser) {
+      const accessToken = generateAccessToken(
+        findUser.id,
+        findUser.email,
+        findUser.firstName + findUser.lastName
+      );
+      const refreshToken = generateRefreshToken(findUser.id);
+
+      findUser.refreshToken = refreshToken;
+      await findUser.save();
+
+      return { accessToken, refreshToken, findUser };
+    }
+    throw new Error(
+      "Something went wrong while generating referesh and access token"
+    );
+  } catch (error) {
+    throw new ApiError(
+      500,
+      "Something went wrong while generating referesh and access token",
+      "refresh token is not generated"
+    );
+  }
+};
 
 export const getAllUser = asyncHandler(async (req: Request, res: Response) => {
   const users = await User.findAll({ attributes: { exclude: ["password"] } });
@@ -81,5 +115,46 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
         )
       );
   }
-  const user = await User.findOne({ where: { email } });
+  const user = await User.scope("withPassword").findOne({ where: { email } });
+  if (!user) {
+    return res
+      .status(400)
+      .json(
+        new ApiError(
+          400,
+          "Email and password are invalid ",
+          "enter a valid email and password"
+        )
+      );
+  }
+  const passwordCorrect = await verifyPassword(password, user.password);
+
+  if (!passwordCorrect) {
+    return res
+      .status(400)
+      .json(
+        new ApiError(
+          401,
+          "Email and password are invalid ",
+          "Enter a valid email and password"
+        )
+      );
+  }
+  const { refreshToken, accessToken, findUser } =
+    await generateAccessAndRefereshTokens(user.id);
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  return res
+    .status(200)
+    .cookie("refreshToken", refreshToken, options)
+    .cookie("accessToken", accessToken, options)
+    .json(
+      new ApiResponse(
+        200,
+        { ...findUser.dataValues, accessToken },
+        "User login successfully"
+      )
+    );
 });
