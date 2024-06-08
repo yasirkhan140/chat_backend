@@ -3,7 +3,6 @@ import { sequelize } from "../db/db";
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
 import { UserTpyedModel } from "../interface";
-import OtpModel from "./otp.models";
 
 const User = sequelize.define<UserTpyedModel>(
   "User",
@@ -84,10 +83,8 @@ const User = sequelize.define<UserTpyedModel>(
     },
   }
 );
-User.hasMany(OtpModel);
 // for password hash
 async function encrptPassword(typedUser: UserTpyedModel) {
-  console.log(process.env.HASH_ROUND_ENCRYPT);
   if (typedUser.changed("password")) {
     typedUser.password = await bcrypt.hash(
       typedUser.get("password"),

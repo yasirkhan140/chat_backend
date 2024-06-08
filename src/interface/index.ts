@@ -14,9 +14,9 @@ interface UserAttributes {
 }
 interface OtpAttributes {
   id: number;
-  otp: number;
+  otp: number | string;
   userId: number;
-  expire: Date;
+  expire?: Date;
   otpToken: string;
   createdAt?: Date;
   updatedAt?: Date;
@@ -29,7 +29,7 @@ export interface UserTpyedModel
     UserAttributes {}
 export interface OtpTpyedModel
   extends Model<OtpAttributes, OtpCreationAttributes>,
-    UserAttributes {}
+    OtpAttributes {}
 export interface IRequest extends Request {
   user: UserTpyedModel;
 }

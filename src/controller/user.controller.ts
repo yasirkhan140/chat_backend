@@ -8,7 +8,7 @@ import User, {
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { IRequest, UserTpyedModel } from "../interface";
-import OtpModel from "../models/otp.models";
+import generateOtp from "../utils/otpGenerate";
 
 // genertae acces token and refresh  token
 const generateAccessAndRefereshTokens = async (userId: number) => {
@@ -98,18 +98,11 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
         )
       );
   }
-  const otpCreateOptions = {
-    userId: user.id,
-    otp: 8888,
-    expire: new Date(),
-    otpToken: "ajhfgjfhgjdfhgjhsdfgfjsdlkgnflkgjhsdikl",
-  };
-  const otpCreate = await OtpModel.create(otpCreateOptions);
+  const otp = await generateOtp(user.id);
+  
   return res
     .status(201)
-    .json(
-      new ApiResponse(201, { user, otpCreate }, "user created successfully")
-    );
+    .json(new ApiResponse(201, { user, otp }, "user created successfully"));
 });
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
