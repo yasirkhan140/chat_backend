@@ -1,13 +1,14 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asynHandler";
 import User, {
-  UserTpyedModel,
   generateAccessToken,
   generateRefreshToken,
   verifyPassword,
 } from "../models/user.models";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
+import { IRequest, UserTpyedModel } from "../interface";
+import OtpModel from "../models/otp.models";
 
 // genertae acces token and refresh  token
 const generateAccessAndRefereshTokens = async (userId: number) => {
@@ -97,10 +98,18 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
         )
       );
   }
-  // const createdUser = await User.findByPk(user.id);
+  const otpCreateOptions = {
+    userId: user.id,
+    otp: 8888,
+    expire: new Date(),
+    otpToken: "ajhfgjfhgjdfhgjhsdfgfjsdlkgnflkgjhsdikl",
+  };
+  const otpCreate = await OtpModel.create(otpCreateOptions);
   return res
     .status(201)
-    .json(new ApiResponse(201, user, "user created successfully"));
+    .json(
+      new ApiResponse(201, { user, otpCreate }, "user created successfully")
+    );
 });
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
   const { email, password }: { email: string; password: string } = req.body;
@@ -157,4 +166,19 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
         "User login successfully"
       )
     );
+});
+
+export const getUser = asyncHandler(async (req: IRequest, res: Response) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json(new ApiError(401, "User not found", "invalid token or user"));
+  }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, req.user, "user get successfully"));
+});
+
+export const updateUser = asyncHandler(async (req: IRequest, res: Response) => {
+  const { email, password, firstName, lastName } = req.body;
 });

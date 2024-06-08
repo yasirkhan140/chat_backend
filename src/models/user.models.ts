@@ -1,25 +1,11 @@
-import { DataTypes, Model, Optional } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
-interface UserAttributes {
-  id: number;
-  firstName: string;
-  lastName?: string;
-  email: string;
-  password: string;
-  refreshToken?: string;
-  createdAt?: Date;
-  updatedAt?: Date;
-  deletedAt?: Date;
-}
-interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
-interface UserInstance
-  extends Model<UserAttributes, UserCreationAttributes>,
-    UserAttributes {}
-export type UserTpyedModel = UserInstance;
+import { UserTpyedModel } from "../interface";
+import OtpModel from "./otp.models";
 
-const User = sequelize.define<UserInstance>(
+const User = sequelize.define<UserTpyedModel>(
   "User",
   {
     // Model attributes are defined here
@@ -52,6 +38,11 @@ const User = sequelize.define<UserInstance>(
           msg: "password cannot be empty",
         },
       },
+    },
+    isVerified: {
+      type: DataTypes.BOOLEAN,
+      allowNull: true,
+      defaultValue: false,
     },
     refreshToken: {
       type: DataTypes.TEXT,
@@ -93,18 +84,25 @@ const User = sequelize.define<UserInstance>(
     },
   }
 );
+User.hasMany(OtpModel);
 // for password hash
 async function encrptPassword(typedUser: UserTpyedModel) {
+  console.log(process.env.HASH_ROUND_ENCRYPT);
   if (typedUser.changed("password")) {
-    typedUser.password = await bcrypt.hash(typedUser.get("password"), 10);
+    typedUser.password = await bcrypt.hash(
+      typedUser.get("password"),
+      parseInt(process.env.HASH_ROUND_ENCRYPT as string)
+    );
   }
 }
 // User.prototype.verifyPassword = async function (password: string) {
 //   return await bcrypt.compare(password, this.password);
 // };
+// for verifypassword
 export const verifyPassword = async (password: string, hasPassword: string) => {
   return await bcrypt.compare(password, hasPassword);
 };
+// for generateRefreshToken
 export const generateRefreshToken = (id: number) => {
   return jwt.sign(
     {
@@ -116,6 +114,7 @@ export const generateRefreshToken = (id: number) => {
     }
   );
 };
+// for generateAccessToken
 export const generateAccessToken = (
   id: number,
   email: string,

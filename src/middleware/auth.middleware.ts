@@ -1,14 +1,13 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import User, { UserTpyedModel } from "../models/user.models";
+import User from "../models/user.models";
 import { asyncHandler } from "../utils/asynHandler";
+import { IRequest } from "../interface";
 interface DecodedToken {
   id: number;
 }
-interface IRequest extends Request {
-  user: UserTpyedModel;
-}
+
 export const authMiddleWare = asyncHandler(
   async (req: IRequest, res: Response, next: NextFunction) => {
     try {
