@@ -17,7 +17,6 @@ interface OtpAttributes {
   otp: number | string;
   userId: number;
   expire?: Date;
-  otpToken: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;

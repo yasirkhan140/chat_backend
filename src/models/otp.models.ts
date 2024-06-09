@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import { OtpTpyedModel } from "../interface";
 import User from "./user.models";
-import jwt, { Secret } from "jsonwebtoken";
+
 const OtpModel = sequelize.define<OtpTpyedModel>(
   "Otp",
   {
@@ -23,10 +23,6 @@ const OtpModel = sequelize.define<OtpTpyedModel>(
     },
     otp: {
       type: DataTypes.INTEGER,
-      allowNull: false,
-    },
-    otpToken: {
-      type: DataTypes.TEXT,
       allowNull: false,
     },
     expire: {
@@ -50,13 +46,8 @@ const OtpModel = sequelize.define<OtpTpyedModel>(
     freezeTableName: true,
     paranoid: true,
     modelName: "otp",
-    hooks: {
-      beforeCreate(otp: OtpTpyedModel) {
-        generateToken(otp);
-      },
-    },
     defaultScope: {
-      attributes: { exclude: ["expire"] },
+      attributes: { exclude: ["otp"] },
     },
     scopes: {
       withOtp: {
@@ -68,17 +59,5 @@ const OtpModel = sequelize.define<OtpTpyedModel>(
 OtpModel.belongsTo(User, {
   foreignKey: "userId",
 });
-const generateToken = (otp: OtpTpyedModel) => {
-  if (otp.changed("otp")) {
-    otp.otpToken = jwt.sign(
-      {
-        id: otp.id,
-      },
-      process.env.REFRESH_TOKEN_SECRET as Secret,
-      {
-        expiresIn: process.env.REFRESH_TOKEN_EXPIRY as string,
-      }
-    );
-  }
-};
+
 export default OtpModel;

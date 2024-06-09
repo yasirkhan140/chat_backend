@@ -66,11 +66,11 @@ const User = sequelize.define<UserTpyedModel>(
     modelName: "user",
     // hooks for user create then run / before saving run
     hooks: {
-      beforeCreate(user: UserTpyedModel) {
-        encrptPassword(user);
+      async beforeCreate(user: UserTpyedModel) {
+        await encrptPassword(user);
       },
-      beforeUpdate(user: UserTpyedModel) {
-        encrptPassword(user);
+      async beforeUpdate(user: UserTpyedModel) {
+        await encrptPassword(user);
       },
     },
     defaultScope: {

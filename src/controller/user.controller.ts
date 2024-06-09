@@ -82,11 +82,18 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
         new ApiError(
           400,
           "Email already exits enter a new email",
-          "email is extists in login or enter a new email"
+          "Email is extists please login or enter a new email"
         )
       );
   }
+  const options = {
+    httpOnly: true,
+    secure: true,
+  };
+  //create user then generate otp and send a mail
+
   const user = await User.create({ firstName, lastName, email, password });
+  const otp = await generateOtp(user.id, user.email);
   if (!user) {
     return res
       .status(500)
@@ -98,10 +105,11 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
         )
       );
   }
-  const otp = await generateOtp(user.id);
-  
+
   return res
     .status(201)
+    .cookie("otpToken", otp.otpToken, options)
+    .cookie("verifyUser", otp, options)
     .json(new ApiResponse(201, { user, otp }, "user created successfully"));
 });
 export const loginUser = asyncHandler(async (req: Request, res: Response) => {
@@ -130,7 +138,6 @@ export const loginUser = asyncHandler(async (req: Request, res: Response) => {
       );
   }
   const passwordCorrect = await verifyPassword(password, user.password);
-
   if (!passwordCorrect) {
     return res
       .status(400)
