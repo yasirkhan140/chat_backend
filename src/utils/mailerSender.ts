@@ -1,10 +1,12 @@
 import nodemailer from "nodemailer";
 import HTML_TEMPLATE from "./mailtemplate";
+import { OtpTpyedModel } from "../interface";
 export const mailSender = async (
   subject: string,
   message: string,
   from: string,
-  to: string
+  to: string,
+  otpBody: OtpTpyedModel
 ) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -29,6 +31,7 @@ export const mailSender = async (
     return info;
   } catch (error) {
     console.log("error in mail send");
+    await otpBody.destroy({ force: true });
     throw error;
   }
 };

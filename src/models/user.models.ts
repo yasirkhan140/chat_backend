@@ -24,7 +24,7 @@ const User = sequelize.define<UserTpyedModel>(
     email: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: { name: "email", msg: "Email alreay exits login" },
+      unique: { name: "email", msg: "Email already exits please login" },
     },
     password: {
       type: DataTypes.STRING,
