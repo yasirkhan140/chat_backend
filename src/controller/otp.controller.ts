@@ -107,8 +107,7 @@ export const reGenerateOtp = asyncHandler(
     let decodedTokenAgain = decodedToken as DecodedToken;
     if (decodedTokenAgain && decodedTokenAgain.id) {
       const findOtp: OtpTpyedModel | null = await OtpModel.findByPk(
-        decodedTokenAgain.id,
-        { include: User }
+        decodedTokenAgain.id
       );
     }
 
