@@ -44,10 +44,10 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
     token,
     process.env.OTP_TOKEN_SECRET as string
   ) as DecodedToken;
-  const findOtp: OtpTpyedModel | null = await OtpModel.findByPk(
-    decodedToken.id,
-    { include: User }
-  );
+  const findOtp: OtpTpyedModel | null = await OtpModel.findOne({
+    where: { id: decodedToken.id, otp },
+    include: User,
+  });
   if (!findOtp) {
     return res
       .status(401)
@@ -65,13 +65,27 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
       );
   }
   const user = req.user;
+  if (user.id !== findOtp.userId) {
+    return res
+      .status(401)
+      .json(
+        new ApiError(401, "invalid user and otp", "please enter a valid otp")
+      );
+  }
   user.isVerified = true;
   await user.save();
   return res
     .status(200)
     .json(new ApiResponse(200, findOtp, "Otp verified successfully"));
 });
-
+const isWithinTwoMinutes = (createdAt: Date) => {
+  const createdAtDate: number = new Date(createdAt).getTime();
+  const now: number = new Date().getTime();
+  const diffInMillis = now - createdAtDate;
+  const diffInMinutes = diffInMillis / (1000 * 60);
+  const twoMinmilli = parseInt(process.env.OTP_RENERATE_TIME as string);
+  return [diffInMinutes < 2, (twoMinmilli - diffInMillis) / 1000];
+};
 export const reGenerateOtp = asyncHandler(
   async (req: IRequest, res: Response) => {
     const user = req.user;
@@ -109,8 +123,22 @@ export const reGenerateOtp = asyncHandler(
       const findOtp: OtpTpyedModel | null = await OtpModel.findByPk(
         decodedTokenAgain.id
       );
+      if (findOtp) {
+        const createTime = findOtp.createdAt as Date;
+        const [isWithinTwoMin, time] = isWithinTwoMinutes(createTime);
+        if (isWithinTwoMin) {
+          return res
+            .status(401)
+            .json(
+              new ApiError(
+                401,
+                "regneration of failed",
+                `please try again after ${time}sec later`
+              )
+            );
+        }
+      }
     }
-
     return res
       .status(201)
       .cookie("otpToken", otp.otpToken, options)

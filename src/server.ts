@@ -4,11 +4,12 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import router from "./routes/index.routes";
 import connection from "./db/db";
+import cornSheduler from "./utils/node-corn";
 dotenv.config({ path: "./.env" });
 
 const PORT: string | number = process.env.PORT || 8000;
 const app = express();
-
+cornSheduler();
 app.listen(PORT, () => {
   console.log("Server listen listen on " + PORT);
 });

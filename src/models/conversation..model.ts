@@ -1,9 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
-import { OtpTpyedModel } from "../interface";
 import User from "./user.models";
 
-const OtpModel = sequelize.define<OtpTpyedModel>(
+const ConversationModel = sequelize.define(
   "Otp",
   {
     // Model attributes are defined here
@@ -13,18 +12,14 @@ const OtpModel = sequelize.define<OtpTpyedModel>(
       primaryKey: true,
       allowNull: false,
     },
-    userId: {
-      type: DataTypes.INTEGER,
+
+    participants: {
+      type: DataTypes.ARRAY(DataTypes.STRING),
       allowNull: false,
       references: {
         model: User,
         key: "id",
       },
-      onDelete: "CASCADE",
-    },
-    otp: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
     },
     expire: {
       type: DataTypes.DATE,
@@ -47,18 +42,7 @@ const OtpModel = sequelize.define<OtpTpyedModel>(
     freezeTableName: true,
     paranoid: true,
     modelName: "otp",
-    defaultScope: {
-      attributes: { exclude: ["otp"] },
-    },
-    scopes: {
-      withOtp: {
-        attributes: undefined,
-      },
-    },
   }
 );
-OtpModel.belongsTo(User, {
-  foreignKey: "userId",
-});
 
-export default OtpModel;
+export default ConversationModel;
