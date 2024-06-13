@@ -1,9 +1,10 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import User from "./user.models";
+import { ConversationTpyedModel } from "../interface";
 
-const ConversationModel = sequelize.define(
-  "Otp",
+const ConversationModel = sequelize.define<ConversationTpyedModel>(
+  "Conversation",
   {
     // Model attributes are defined here
     id: {
@@ -14,16 +15,20 @@ const ConversationModel = sequelize.define(
     },
 
     participants: {
-      type: DataTypes.ARRAY(DataTypes.STRING),
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
       references: {
         model: User,
         key: "id",
       },
     },
-    expire: {
-      type: DataTypes.DATE,
+    messages: {
+      type: DataTypes.ARRAY(DataTypes.INTEGER),
       allowNull: false,
+      references: {
+        model: "Message",
+        key: "id",
+      },
     },
     createdAt: {
       allowNull: false,
@@ -41,7 +46,7 @@ const ConversationModel = sequelize.define(
     timestamps: true,
     freezeTableName: true,
     paranoid: true,
-    modelName: "otp",
+    modelName: "Conversation",
   }
 );
 
