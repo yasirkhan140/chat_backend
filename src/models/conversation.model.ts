@@ -1,7 +1,10 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
-import User from "./user.models";
 import { ConversationTpyedModel } from "../interface";
+import ConversationParticipantsModel from "./conversationParticipants.model";
+import ConversationMessagesModel from "./conversationMessage.model";
+import MessageModel from "./message.model";
+import User from "./user.models";
 
 const ConversationModel = sequelize.define<ConversationTpyedModel>(
   "Conversation",
@@ -12,23 +15,6 @@ const ConversationModel = sequelize.define<ConversationTpyedModel>(
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
-    },
-
-    participants: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false,
-      references: {
-        model: User,
-        key: "id",
-      },
-    },
-    messages: {
-      type: DataTypes.ARRAY(DataTypes.INTEGER),
-      allowNull: false,
-      references: {
-        model: "Message",
-        key: "id",
-      },
     },
     createdAt: {
       allowNull: false,

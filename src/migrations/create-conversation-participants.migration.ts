@@ -4,12 +4,22 @@ import { QueryInterface } from "sequelize";
 import Sequelize from "sequelize";
 const migration = {
   async up(queryInterface: QueryInterface, sequelize: typeof Sequelize) {
-    await queryInterface.createTable("Conversation", {
-      id: {
-        allowNull: false,
-        autoIncrement: true,
-        primaryKey: true,
+    await queryInterface.createTable("ConversationParticipants", {
+      conversationId: {
         type: sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Conversation",
+          key: "id",
+        },
+      },
+      userId: {
+        type: sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "id",
+        },
       },
       createdAt: {
         allowNull: false,
@@ -25,7 +35,7 @@ const migration = {
     });
   },
   async down(queryInterface: QueryInterface, sequelize: typeof Sequelize) {
-    await queryInterface.dropTable("Conversation");
+    await queryInterface.dropTable("ConversationParticipants");
   },
 };
 export default migration;
