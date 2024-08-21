@@ -1,0 +1,23 @@
+ARG NODE_VERSION=22.6.0
+
+FROM node:${NODE_VERSION}-alpine
+
+ENV NODE_ENV development
+
+WORKDIR /usr/src/app
+
+COPY package.json ./
+
+COPY package-lock.json ./
+
+USER node
+
+RUN sudo chmod -R 777 /usr/src/app
+
+RUN npm install
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["npm", "run", "dev"]
