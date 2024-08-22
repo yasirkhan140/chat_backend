@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import {  Response } from "express";
 import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import OtpModel from "../models/otp.models";

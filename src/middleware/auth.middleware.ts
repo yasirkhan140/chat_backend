@@ -43,7 +43,7 @@ export const authMiddleWare = asyncHandler(
     } catch (error) {
       return res
         .status(500)
-        .json(new ApiError(401, error?.message, "Invalid access token"));
+        .json(new ApiError(500, error?.message, "Invalid access token"));
     }
   }
 );

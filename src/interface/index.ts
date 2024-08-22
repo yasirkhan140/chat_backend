@@ -32,6 +32,7 @@ interface ConversationParticipantsnAttributes {
   id?: number;
   conversationId: number;
   userId: number;
+  secondUserId:number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -59,9 +60,9 @@ interface MessageCreationAttributes extends Optional<MessageAttributes, "id"> {}
 interface ConversationMessageCreationAttributes
   extends Optional<ConversationMessageAttributes, "id"> {}
 interface ConversationCreationAttributes
-  extends Optional<ConversationParticipantsnAttributes, "id"> {}
-interface ConversationParticipantsCreationAttributes
   extends Optional<ConversationAttributes, "id"> {}
+interface ConversationParticipantsCreationAttributes
+  extends Optional<ConversationParticipantsnAttributes, "id"> {}
 export interface UserTpyedModel
   extends Model<UserAttributes, UserCreationAttributes>,
     UserAttributes {}

@@ -2,6 +2,7 @@ import { IRouter, Response, Router } from "express";
 import { ApiResponse } from "../../utils/ApiResponse";
 import userRoutes from "./user.routes";
 import otpRouter from "./otp.routes";
+import conversationRouter from './conversation.routes'
 import { asyncHandler } from "../../utils/asynHandler";
 const router: IRouter = Router();
 // health route for check sevrer running status.
@@ -22,4 +23,5 @@ router.get(
 // routes for v1 api
 router.use("/", userRoutes);
 router.use("/", otpRouter);
+router.use("/", conversationRouter);
 export default router;

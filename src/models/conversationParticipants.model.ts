@@ -25,6 +25,14 @@ const ConversationParticipantsModel =
           key: "id",
         },
       },
+      secondUserId: {
+        type: DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: User,
+          key: "id",
+        },
+      },
     },
     {
       timestamps: true,
@@ -33,5 +41,8 @@ const ConversationParticipantsModel =
       modelName: "ConversationParticipants",
     }
   );
-
+  ConversationParticipantsModel.belongsTo(ConversationModel, {
+    foreignKey: 'conversationId',
+    as: 'conversation'
+  });
 export default ConversationParticipantsModel;

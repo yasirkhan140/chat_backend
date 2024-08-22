@@ -21,6 +21,14 @@ const migration = {
           key: "id",
         },
       },
+      secondUserId: {
+        type: sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "id",
+        },
+      },
       createdAt: {
         allowNull: false,
         type: sequelize.DATE,
