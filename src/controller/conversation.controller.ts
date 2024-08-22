@@ -4,11 +4,13 @@ import {
   ConversationParticipantsTpyedModel,
   ConversationTpyedModel,
   IRequest,
+  UserTpyedModel,
 } from "../interface";
 import { ApiError } from "../utils/ApiError";
 import ConversationModel from "../models/conversation.model";
 import ConversationParticipantsModel from "../models/conversationParticipants.model";
 import { ApiResponse } from "../utils/ApiResponse";
+import User from "../models/user.models";
 
 export const createConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
@@ -19,6 +21,33 @@ export const createConversation = asyncHandler(
         .status(401)
         .json(
           new ApiError(401, "Second user id is required", "id is compulsory")
+        );
+    }
+    const userisExitsorNot:UserTpyedModel|null =await User.findByPk(secondUserId);
+    if(!userisExitsorNot){
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "user is not exits",
+            "user/id is not exits"
+          )
+        );
+    }
+    const exitsConversation: ConversationParticipantsTpyedModel | null =
+      await ConversationParticipantsModel.findOne({
+        where: { userId: user.id, secondUserId: secondUserId },
+      });
+    if (exitsConversation) {
+      return res
+        .status(401)
+        .json(
+          new ApiError(
+            401,
+            "conversation is already exits",
+            "conversation/chat is already created"
+          )
         );
     }
     const conversationCreate: ConversationTpyedModel | null =
@@ -66,11 +95,7 @@ export const createConversation = asyncHandler(
     return res
       .status(200)
       .json(
-        new ApiResponse(
-          200,
-          converstion,
-          "conversation created successfully"
-        )
+        new ApiResponse(200, converstion, "conversation created successfully")
       );
   }
 );
