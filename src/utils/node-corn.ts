@@ -1,10 +1,8 @@
 import cron from "node-cron";
 import OtpModel from "../models/otp.models";
-import { Op } from "sequelize";
 import { deleteByExpire } from "../query/deleteOtp";
 const cornSheduler = () => {
-  cron.schedule("*/45 * * * * *", async function () {
-    console.log("running a task every 45 second");
+  cron.schedule("*/60 * * * * *", async function () {
     const currentDate = new Date();
     // await OtpModel.destroy({
     //   where: { expire: { [Op.lte]: new Date() } },

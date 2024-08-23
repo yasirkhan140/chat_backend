@@ -55,30 +55,40 @@ interface MessageAttributes {
   deletedAt?: Date;
 }
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
+
 interface OtpCreationAttributes extends Optional<OtpAttributes, "id"> {}
+
 interface MessageCreationAttributes extends Optional<MessageAttributes, "id"> {}
+
 interface ConversationMessageCreationAttributes
   extends Optional<ConversationMessageAttributes, "id"> {}
+
 interface ConversationCreationAttributes
   extends Optional<ConversationAttributes, "id"> {}
+
 interface ConversationParticipantsCreationAttributes
   extends Optional<ConversationParticipantsnAttributes, "id"> {}
+
 export interface UserTpyedModel
   extends Model<UserAttributes, UserCreationAttributes>,
     UserAttributes {}
+
 export interface OtpTpyedModel
   extends Model<OtpAttributes, OtpCreationAttributes>,
     OtpAttributes {}
+    
 
 export interface ConversationTpyedModel
   extends Model<ConversationAttributes, ConversationCreationAttributes>,
     ConversationAttributes {}
+
 export interface ConversationParticipantsTpyedModel
   extends Model<
       ConversationParticipantsnAttributes,
       ConversationParticipantsCreationAttributes
     >,
     ConversationParticipantsnAttributes {}
+
 export interface MessageTpyedModel
   extends Model<MessageAttributes, MessageCreationAttributes>,
     MessageAttributes {}
@@ -89,6 +99,11 @@ export interface ConversationMessageTpyedModel
       ConversationMessageCreationAttributes
     >,
     ConversationMessageAttributes {}
+
 export interface IRequest extends Request {
   user: UserTpyedModel;
+}
+
+export interface DecodedToken {
+  id: number;
 }

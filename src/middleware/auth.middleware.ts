@@ -3,10 +3,8 @@ import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import User from "../models/user.models";
 import { asyncHandler } from "../utils/asynHandler";
-import { IRequest } from "../interface";
-interface DecodedToken {
-  id: number;
-}
+import { DecodedToken, IRequest } from "../interface";
+
 
 export const authMiddleWare = asyncHandler(
   async (req: IRequest, res: Response, next: NextFunction) => {
