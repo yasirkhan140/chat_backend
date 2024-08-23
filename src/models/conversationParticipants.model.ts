@@ -45,4 +45,12 @@ const ConversationParticipantsModel =
     foreignKey: 'conversationId',
     as: 'conversation'
   });
+  ConversationParticipantsModel.belongsTo(User,{
+    foreignKey:"userId",
+    as:"user"
+  })
+  ConversationParticipantsModel.belongsTo(User,{
+    foreignKey:"secondUserId",
+    as:"secondUser"
+  })
 export default ConversationParticipantsModel;
