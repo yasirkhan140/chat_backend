@@ -7,13 +7,13 @@ import { ExtendedError } from "socket.io/dist/namespace";
 export const authenticateSocket = (socket: Socket, next: (err?: ExtendedError) => void) => {
   const token = socket.handshake.query.token as string;
   if (!token) {
-    return next(new Error("Authentication error"));
+    return next(new Error("Authentication error token is not send"));
   }
 
   // Verify the token and attach user information to the socket
   verifyToken(token, (err, user) => {
     if (err || !user) {
-      return next(new Error("Authentication error") as ExtendedError);
+      return next(new Error("Authentication error invalid token") as ExtendedError);
     }
     (socket as any).user = user; // Attach user info to the socket
     next();

@@ -2,8 +2,6 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import User from "./user.models";
 import { MessageTpyedModel } from "../interface";
-import ConversationMessagesModel from "./conversationMessage.model";
-import ConversationModel from "./conversation.model";
 
 const MessageModel = sequelize.define<MessageTpyedModel>(
   "Message",
@@ -56,4 +54,12 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
   }
 );
 
+MessageModel.belongsTo(User,{
+  foreignKey:"senderId",
+  as:"user"
+})
+MessageModel.belongsTo(User,{
+  foreignKey:"receiverId",
+  as:"secondUser"
+})
 export default MessageModel;

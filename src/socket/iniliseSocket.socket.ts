@@ -1,40 +1,78 @@
 // socket.ts
-import { Server as SocketIOServer, Socket } from 'socket.io'; // Import from socket.io
-import http from 'http';
-import { authenticateSocket } from './authencateSocket.socket';
+import { Server as SocketIOServer, Socket } from "socket.io"; // Import from socket.io
+import http from "http";
+import { authenticateSocket } from "./authencateSocket.socket";
+import MessageModel from "../models/message.model";
+import ConversationMessagesModel from "../models/conversationMessage.model";
+import ConversationModel from "../models/conversation.model";
+import ConversationParticipantsModel from "../models/conversationParticipants.model";
+import User from "../models/user.models";
 // Import your message model
 
 export const setupSocketIO = (server: http.Server) => {
   const io = new SocketIOServer(server);
-// Use authentication middleware for Socket.IO
-io.use(authenticateSocket);
-  io.on('connection', (socket: Socket) => {
-    console.log('A user connected');
+  // Use authentication middleware for Socket.IO
+  io.use(authenticateSocket);
+  io.on("connection", (socket: Socket) => {
+    console.log("A user connected");
 
     // Example event handler for chat messages
-    socket.on('chat message', async (conversationId: string, msg: string) => {
+    socket.on(`chat message`, async (conversationId: string, msg: string) => {
+      const user = (socket as any).user;
       const message = {
         userId: (socket as any).user.id,
         conversationId,
         content: msg,
       };
+      const conversationExists = await ConversationModel.findByPk(
+        parseInt(conversationId),
+        {
+          include: [
+            {
+              model: ConversationParticipantsModel,
+              as: "participants",
+              include: [
+                {
+                  model: User,
+                  as: "participant",
+                },
+              ],
+            },
+          ],
+        }
+      );
 
+      if (!conversationExists) {
+        console.error(`Conversation with ID ${conversationId} does not exist.`);
+        return;
+      }
+      const messageSaved = await MessageModel.create({
+        message: msg,
+        senderId: user.id,
+        receiverId: user.id,
+      });
+      await ConversationMessagesModel.create({
+        messageId: messageSaved.id,
+        conversationId: parseInt(conversationId),
+      });
+      console.log(message);
       // Save message to the database
-    
 
       // Emit message to all users in the conversation
-      io.to(conversationId).emit('chat message', message);
+      io.to(conversationId).emit("recieved message", message);
     });
 
     // Handle joining a conversation
-    socket.on('join conversation', (conversationId: string) => {
+    socket.on("join conversation", (conversationId: string) => {
       socket.join(conversationId);
-      console.log(`User ${(socket as any).user.id} joined conversation ${conversationId}`);
+      console.log(
+        `User ${(socket as any).user.id} joined conversation ${conversationId}`
+      );
     });
 
     // Handle disconnect
-    socket.on('disconnect', () => {
-      console.log('User disconnected:', (socket as any).user.id);
+    socket.on("disconnect", () => {
+      console.log("User disconnected:", (socket as any).user.id);
     });
   });
 

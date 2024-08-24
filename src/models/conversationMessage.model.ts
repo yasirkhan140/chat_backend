@@ -31,4 +31,12 @@ const ConversationMessagesModel =
       modelName: "ConversationMessages",
     }
   );
+ConversationMessagesModel.belongsTo(MessageModel, {
+  foreignKey: "messageId",
+  as: "message",
+});
+ConversationMessagesModel.belongsTo(ConversationModel, {
+  foreignKey: "conversationId",
+  as: "conversation",
+});
 export default ConversationMessagesModel;

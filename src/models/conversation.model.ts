@@ -1,10 +1,9 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import { ConversationTpyedModel } from "../interface";
-import ConversationParticipantsModel from "./conversationParticipants.model";
 import ConversationMessagesModel from "./conversationMessage.model";
-import MessageModel from "./message.model";
-import User from "./user.models";
+import ConversationParticipantsModel from "./conversationParticipants.model";
+
 
 const ConversationModel = sequelize.define<ConversationTpyedModel>(
   "Conversation",
@@ -35,5 +34,7 @@ const ConversationModel = sequelize.define<ConversationTpyedModel>(
     modelName: "Conversation",
   }
 );
+
+
 
 export default ConversationModel;
