@@ -1,8 +1,9 @@
 // authenticateSocket.ts
 import jwt, { JwtPayload } from "jsonwebtoken";
 import { Socket } from "socket.io";
-import { DecodedToken } from "../interface";
+import { DecodedToken, UserTpyedModel } from "../interface";
 import { ExtendedError } from "socket.io/dist/namespace";
+import User from "../models/user.models";
 
 export const authenticateSocket = (socket: Socket, next: (err?: ExtendedError) => void) => {
   const token = socket.handshake.query.token as string;
@@ -21,15 +22,18 @@ export const authenticateSocket = (socket: Socket, next: (err?: ExtendedError) =
 };
 async function verifyToken(
   token: string,
-  callback: (err: Error | null, user?: string | JwtPayload) => void
+  callback: (err: Error | null, user?: UserTpyedModel) => void
 ) {
   try {
     const decodedToken: string | JwtPayload = jwt.verify(
       token,
       process.env.ACCESS_TOKEN_SECRET as string
     ) as DecodedToken;
-  
-    callback(null, decodedToken);
+  const user:UserTpyedModel | null = await User.findByPk(decodedToken.id)
+  if(!user){
+throw new Error("User not found")
+  }
+    callback(null, user);
   } catch (error) {
     return callback(error as ExtendedError);
   }

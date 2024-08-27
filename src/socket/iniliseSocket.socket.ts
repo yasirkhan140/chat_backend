@@ -7,8 +7,14 @@ import ConversationMessagesModel from "../models/conversationMessage.model";
 import ConversationModel from "../models/conversation.model";
 import ConversationParticipantsModel from "../models/conversationParticipants.model";
 import User from "../models/user.models";
+import { ConversationParticipantsTpyedModel, ConversationTpyedModel } from "../interface";
+import { UserTpyedModel } from '../interface/index';
 // Import your message model
-
+interface IExtistsConversation extends ConversationParticipantsTpyedModel{
+  user:UserTpyedModel,
+  secondUser:UserTpyedModel,
+  conversation:ConversationTpyedModel
+}
 export const setupSocketIO = (server: http.Server) => {
   const io = new SocketIOServer(server);
   // Use authentication middleware for Socket.IO
@@ -24,32 +30,35 @@ export const setupSocketIO = (server: http.Server) => {
         conversationId,
         content: msg,
       };
-      const conversationExists = await ConversationModel.findByPk(
-        parseInt(conversationId),
-        {
-          include: [
-            {
-              model: ConversationParticipantsModel,
-              as: "participants",
-              include: [
-                {
-                  model: User,
-                  as: "participant",
-                },
-              ],
-            },
-          ],
-        }
-      );
+      const conversationExists = await ConversationParticipantsModel.findOne({
+        where: { conversationId: parseInt(conversationId) },
+        include: [
+          {
+            model: ConversationModel,
+            as: "conversation",
+          },
+          {
+            model: User,
+            as: "user",
+            
+          },
+          {
+            model: User,
+            as: "secondUser",
+            
+          },
+        ],
+      }) as IExtistsConversation;
 
       if (!conversationExists) {
         console.error(`Conversation with ID ${conversationId} does not exist.`);
         return;
       }
+      console.log(conversationExists.user.id,conversationExists.secondUser.id)
       const messageSaved = await MessageModel.create({
         message: msg,
         senderId: user.id,
-        receiverId: user.id,
+        receiverId:user.id=== conversationExists.secondUser.id?conversationExists.user.id:conversationExists.secondUser.id
       });
       await ConversationMessagesModel.create({
         messageId: messageSaved.id,
