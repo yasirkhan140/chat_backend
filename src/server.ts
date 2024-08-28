@@ -23,9 +23,9 @@ app.use(
   })
 );
 // limit on json
-app.use(express.json({ limit: "25kb" }));
+app.use(express.json({ limit: "26kb" }));
 // url encoded
-app.use(express.urlencoded({ extended: true, limit: "25kb" }));
+app.use(express.urlencoded({ extended: true, limit: "26kb" }));
 // cookie parse to excess cokkie
 app.use(cookieParser());
 // app.use router
