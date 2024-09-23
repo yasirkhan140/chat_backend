@@ -1,12 +1,13 @@
-import {  Response } from "express";
+import { Response } from "express";
 import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken";
 import OtpModel from "../models/otp.models";
 import { IRequest, OtpTpyedModel } from "../interface";
-import User from "../models/user.models";
+import User, { generateAccessToken } from "../models/user.models";
 import { asyncHandler } from "../utils/asynHandler";
 import { ApiResponse } from "../utils/ApiResponse";
 import generateOtp from "../utils/otpGenerate";
+import { generateAccessAndRefereshTokens } from "./user.controller";
 interface DecodedToken extends JwtPayload {
   id: number;
 }
@@ -16,7 +17,7 @@ const options = {
 };
 export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
   const token: string | undefined =
-    req.cookies?.accessToken || req.header("otpToken");
+    req.cookies?.otpToken || req.header("otpToken");
   const { otp }: { otp: string } = req.body;
   if (!otp || otp.length === 6) {
     return res
@@ -72,10 +73,17 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
         new ApiError(401, "invalid user and otp", "please enter a valid otp")
       );
   }
+  const { accessToken, refreshToken } = await generateAccessAndRefereshTokens(
+    user.id
+  );
   user.isVerified = true;
   await user.save();
   return res
     .status(200)
+    .cookie("accessToken", accessToken, options)
+    .cookie("refreshToken", refreshToken, options)
+    .clearCookie("otpToken")
+    .clearCookie("verifyUser")
     .json(new ApiResponse(200, findOtp, "Otp verified successfully"));
 });
 const isWithinTwoMinutes = (createdAt: Date) => {
@@ -90,7 +98,7 @@ export const reGenerateOtp = asyncHandler(
   async (req: IRequest, res: Response) => {
     const user = req.user;
     const token: string | undefined =
-      req.cookies?.accessToken || req.header("otpToken");
+      req.cookies?.otpToken || req.header("otpToken");
     const otp = await generateOtp(user.id, user.email);
     if (!otp || otp.message || !otp.otpToken) {
       await user.destroy({ force: true });

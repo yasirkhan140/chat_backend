@@ -12,7 +12,7 @@ import ConversationParticipantsModel from "../models/conversationParticipants.mo
 import { ApiResponse } from "../utils/ApiResponse";
 import User from "../models/user.models";
 import { Op } from "sequelize";
-
+//create conversation
 export const createConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
     const { secondUserId }: { secondUserId: number | null } = req.body;
@@ -102,7 +102,7 @@ export const getAllConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
     const user = req.user;
     const allConversation = await ConversationParticipantsModel.findAll({
-      where: { [Op.or]: [{ userId: user.id},{ secondUserId: user.id }] },
+      where: { [Op.or]: [{ userId: user.id }, { secondUserId: user.id }] },
       include: [
         {
           model: User,
@@ -135,7 +135,6 @@ export const getAllConversation = asyncHandler(
           },
         },
       ],
-      
     });
     if (!allConversation) {
       return res

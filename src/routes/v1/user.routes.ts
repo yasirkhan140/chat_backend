@@ -5,13 +5,15 @@ import {
   getAllUser,
   getUser,
   loginUser,
+  logoutUser,
 } from "../../controller/user.controller";
 import { authMiddleWare } from "../../middleware/auth.middleware";
 
 const router: IRouter = Router();
-router.get("/users", authMiddleWare, getAllUser);
+// router.get("/users", authMiddleWare, getAllUser);
 router.get("/user", authMiddleWare, getUser);
 router.post("/register", createUser);
 router.post("/login", loginUser);
 router.get("/token", generateAccessTokenByRequest);
+router.get("/logout", logoutUser);
 export default router;

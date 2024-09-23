@@ -18,7 +18,7 @@ const options = {
   httpOnly: true,
   secure: true,
 };
-const generateAccessAndRefereshTokens = async (userId: number) => {
+export const generateAccessAndRefereshTokens = async (userId: number) => {
   try {
     const findUser: UserTpyedModel | null = await User.findByPk(userId);
     if (findUser) {
@@ -269,3 +269,18 @@ export const generateAccessTokenByRequest = asyncHandler(
       );
   }
 );
+
+export const logoutUser = asyncHandler(async (req: IRequest, res: Response) => {
+  if (!req.user) {
+    return res
+      .status(401)
+      .json(new ApiError(401, "User not found", "invalid token or user"));
+  }
+  return res
+    .status(200)
+    .clearCookie("accessToken")
+    .clearCookie("refreshToken")
+    .json(
+      new ApiResponse(200, "user logout succesfully", "user get successfully")
+    );
+});
