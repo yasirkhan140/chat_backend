@@ -38,6 +38,9 @@ const User = sequelize.define<UserTpyedModel>(
         },
       },
     },
+    profileImg: {
+      type: DataTypes.STRING,
+    },
     isVerified: {
       type: DataTypes.BOOLEAN,
       allowNull: true,

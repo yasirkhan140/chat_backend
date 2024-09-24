@@ -158,3 +158,69 @@ export const getAllConversation = asyncHandler(
       );
   }
 );
+export const getUserConversation = asyncHandler(
+  async (req: IRequest, res: Response) => {
+    const id = req.params.id;
+    const user = req.user;
+    const allConversation = await ConversationParticipantsModel.findOne({
+      where: {
+        [Op.or]: [
+          { userId: user.id, secondUserId: id },
+          { secondUserId: user.id, userId: id },
+        ],
+      },
+      include: [
+        {
+          model: User,
+          as: "user",
+          attributes: {
+            exclude: [
+              "createdAt",
+              "updatedAt",
+              "deletedAt",
+              "refreshToken",
+              "isVerified",
+              "password",
+              "email",
+            ],
+          },
+        },
+        {
+          model: User,
+          as: "secondUser",
+          attributes: {
+            exclude: [
+              "createdAt",
+              "updatedAt",
+              "deletedAt",
+              "refreshToken",
+              "isVerified",
+              "password",
+              "email",
+            ],
+          },
+        },
+      ],
+    });
+    if (!allConversation) {
+      return res
+        .status(500)
+        .json(
+          new ApiError(
+            500,
+            "some error occured",
+            "error in fetching conversation"
+          )
+        );
+    }
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          allConversation,
+          "conversation/chats fetch successfully"
+        )
+      );
+  }
+);

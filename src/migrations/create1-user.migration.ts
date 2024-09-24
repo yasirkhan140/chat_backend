@@ -38,6 +38,9 @@ const migration = {
         allowNull: false,
         type: sequelize.DATE,
       },
+      profileImg: {
+        type: sequelize.STRING(),
+      },
       password: {
         type: sequelize.STRING(64),
         validate: {

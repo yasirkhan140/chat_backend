@@ -3,19 +3,21 @@ import { authMiddleWare } from "../../middleware/auth.middleware";
 import {
   createConversation,
   getAllConversation,
+  getUserConversation,
 } from "../../controller/conversation.controller";
 
 const router: IRouter = Router();
 
 router.post("/create-conversation", authMiddleWare, createConversation);
 router.get("/get-all-conversation", authMiddleWare, getAllConversation);
+router.get("/get-user-conversations/:id", authMiddleWare, getUserConversation);
 router.delete("/delete-conversation/:id");
 export default router;
 // chats
 export const GET_FAVOURITES = "/get-favourites";
 export const GET_DIRECT_MESSAGES = "/get-direct-messages";
 export const GET_CHANNELS = "/get-channles";
-export const ADD_CONTACTS = "/add-contact";
+// export const ADD_CONTACTS = "/add-contact";
 export const CREATE_CHANNEL = "/create-channel";
 export const GET_CHAT_USER_DETAILS = "/get-user-details";
 export const GET_CHAT_USER_CONVERSATIONS = "/get-user-conversations";

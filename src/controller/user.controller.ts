@@ -280,13 +280,31 @@ export const generateAccessTokenByRequest = asyncHandler(
       );
   }
 );
-
-export const logoutUser = asyncHandler(async (req: IRequest, res: Response) => {
-  if (!req.user) {
+export const userDetail = asyncHandler(async (req: IRequest, res: Response) => {
+  const id = req.params.id;
+  const userDetail = await User.findOne({
+    where: { id: id },
+    attributes: {
+      exclude: [
+        "password",
+        "refreshToken",
+        "isVerified",
+        "createdAt",
+        "updatedAt",
+        "deletedAt",
+      ],
+    },
+  });
+  if (!userDetail) {
     return res
-      .status(401)
-      .json(new ApiError(401, "User not found", "invalid token or user"));
+      .status(400)
+      .json(new ApiError(400, "Invalid id or some error", "some error occurs"));
   }
+  return res
+    .status(200)
+    .json(new ApiResponse(200, userDetail, "user detail fetch succefully"));
+});
+export const logoutUser = asyncHandler(async (req: IRequest, res: Response) => {
   return res
     .status(200)
     .clearCookie("accessToken")

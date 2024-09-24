@@ -11,6 +11,7 @@ interface UserAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  profileImg?: string;
 }
 interface OtpAttributes {
   id: number;
@@ -32,7 +33,7 @@ interface ConversationParticipantsnAttributes {
   id?: number;
   conversationId: number;
   userId: number;
-  secondUserId:number;
+  secondUserId: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -76,7 +77,6 @@ export interface UserTpyedModel
 export interface OtpTpyedModel
   extends Model<OtpAttributes, OtpCreationAttributes>,
     OtpAttributes {}
-    
 
 export interface ConversationTpyedModel
   extends Model<ConversationAttributes, ConversationCreationAttributes>,

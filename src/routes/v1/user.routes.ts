@@ -6,6 +6,7 @@ import {
   getUser,
   loginUser,
   logoutUser,
+  userDetail,
 } from "../../controller/user.controller";
 import { authMiddleWare } from "../../middleware/auth.middleware";
 
@@ -16,4 +17,5 @@ router.post("/register", createUser);
 router.post("/login", loginUser);
 router.get("/token", generateAccessTokenByRequest);
 router.get("/logout", logoutUser);
+router.get("/get-user-details/:id", authMiddleWare, userDetail);
 export default router;
