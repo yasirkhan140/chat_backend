@@ -15,7 +15,7 @@ import { Op } from "sequelize";
 //create conversation
 export const createConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
-    const { secondUserId }: { secondUserId: number | null } = req.body;
+    const { secondUserId }: { secondUserId: Array<number> | null } = req.body;
     const user = req.user;
     if (!secondUserId) {
       return res
@@ -25,7 +25,7 @@ export const createConversation = asyncHandler(
         );
     }
     const userisExitsorNot: UserTpyedModel | null = await User.findByPk(
-      secondUserId
+      secondUserId[0]
     );
     if (!userisExitsorNot) {
       return res
@@ -59,7 +59,7 @@ export const createConversation = asyncHandler(
     const conversationParcipants: ConversationParticipantsTpyedModel | null =
       await ConversationParticipantsModel.create({
         userId: user.id,
-        secondUserId: secondUserId,
+        secondUserId: secondUserId[0],
         conversationId: conversationCreate.id,
       });
     if (!conversationParcipants) {

@@ -10,7 +10,7 @@ import {
 import { authMiddleWare } from "../../middleware/auth.middleware";
 
 const router: IRouter = Router();
-// router.get("/users", authMiddleWare, getAllUser);
+router.get("/users", authMiddleWare, getAllUser);
 router.get("/user", authMiddleWare, getUser);
 router.post("/register", createUser);
 router.post("/login", loginUser);

@@ -47,7 +47,18 @@ export const generateAccessAndRefereshTokens = async (userId: number) => {
 };
 
 export const getAllUser = asyncHandler(async (req: Request, res: Response) => {
-  const users = await User.findAll({ attributes: { exclude: ["password"] } });
+  const users = await User.findAll({
+    attributes: {
+      exclude: [
+        "password",
+        "refreshToken",
+        "isVerified",
+        "createdAt",
+        "updatedAt",
+        "deletedAt",
+      ],
+    },
+  });
   if (!users)
     return res
       .status(500)
@@ -207,7 +218,7 @@ export const generateAccessTokenByRequest = asyncHandler(
       req.cookies?.refreshToken || req.header("refreshToken");
     if (!refreshToken) {
       return res
-        .status(401)
+        .status(402)
         .json(
           new ApiError(
             401,
@@ -224,7 +235,7 @@ export const generateAccessTokenByRequest = asyncHandler(
       ) as IDecodeRefreshToken;
     } catch (error) {
       return res
-        .status(401)
+        .status(402)
         .json(
           new ApiError(
             401,
@@ -236,7 +247,7 @@ export const generateAccessTokenByRequest = asyncHandler(
     const user = await User.findByPk(decodedToken.id);
     if (!user) {
       return res
-        .status(401)
+        .status(402)
         .json(
           new ApiError(401, "User not found ", "Invalid token or user deleted")
         );
