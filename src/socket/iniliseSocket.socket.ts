@@ -16,7 +16,11 @@ interface IExtistsConversation extends ConversationParticipantsTpyedModel{
   conversation:ConversationTpyedModel
 }
 export const setupSocketIO = (server: http.Server) => {
-  const io = new SocketIOServer(server);
+  const io = new SocketIOServer(server,{cors: {
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
+  }});
   // Use authentication middleware for Socket.IO
   io.use(authenticateSocket);
   io.on("connection", (socket: Socket) => {
@@ -24,6 +28,7 @@ export const setupSocketIO = (server: http.Server) => {
 
     // Example event handler for chat messages
     socket.on(`chat message`, async (conversationId: string, msg: string) => {
+      console.log(conversationId,msg)
       const user = (socket as any).user;
       const message = {
         userId: (socket as any).user.id,

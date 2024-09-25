@@ -4,15 +4,20 @@ import { Socket } from "socket.io";
 import { DecodedToken, UserTpyedModel } from "../interface";
 import { ExtendedError } from "socket.io/dist/namespace";
 import User from "../models/user.models";
-
+import cookie from "cookie"
 export const authenticateSocket = (socket: Socket, next: (err?: ExtendedError) => void) => {
-  const token = socket.handshake.query.token as string;
-  if (!token) {
+  const cookies =socket.handshake.headers.cookie 
+  if(!cookies){
+    return next(new Error("Cookies are not send"));
+  }
+  const parsedCookies = cookie.parse(cookies) ;
+  const accessToken = parsedCookies.accessToken || socket.handshake.headers.token as string;
+  if (!accessToken) {
     return next(new Error("Authentication error token is not send"));
   }
 
   // Verify the token and attach user information to the socket
-  verifyToken(token, (err, user) => {
+  verifyToken(accessToken, (err, user) => {
     if (err || !user) {
       return next(new Error("Authentication error invalid token") as ExtendedError);
     }
