@@ -71,6 +71,31 @@ interface BookMarkAttributeTypes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
+enum DisplayStatus {
+  "everyone",
+  "selected",
+  "nobody",
+}
+enum Status {
+  "Active",
+  "Away",
+  "Do not disturb",
+}
+interface SettingAttributesTypes {
+  id: number;
+  themeColor: string;
+  themeImage: string;
+  displayprofilePhoto: string;
+  displayLastSeen: boolean;
+  displayStatus: DisplayStatus;
+  readReceipts: boolean;
+  displayGroups: DisplayStatus;
+  status: Status
+  securityNotification: boolean
+  createdAt?: Date
+  updatedAt?: Date
+  deletedAt?: Date
+}
 
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
 
@@ -89,6 +114,8 @@ interface ConversationParticipantsCreationAttributes
 
 interface BookMarkCreationAttributes
   extends Optional<BookMarkAttributeTypes, "id"> {}
+
+  interface SettingCreationAttributes extends Optional<SettingAttributesTypes, "id"> {}
 
 export interface UserTpyedModel
   extends Model<UserAttributes, UserCreationAttributes>,
@@ -123,6 +150,10 @@ export interface ConversationMessageTpyedModel
 export interface BookMarkTypedModel
   extends Model<BookMarkAttributeTypes, BookMarkCreationAttributes>,
     BookMarkAttributeTypes {}
+
+    export interface SettingTypedModel
+  extends Model<SettingAttributesTypes, SettingCreationAttributes>,
+  SettingAttributesTypes {}
 
 export interface IRequest extends Request {
   user: UserTpyedModel;

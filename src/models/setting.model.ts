@@ -1,8 +1,8 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
-import { BookMarkTypedModel } from "../interface";
+import {  SettingTypedModel } from "../interface";
 
-const SetingModel = sequelize.define(
+const SetingModel = sequelize.define<SettingTypedModel>(
   "Setting",
   {
     // Model attributes are defined here
@@ -15,12 +15,17 @@ const SetingModel = sequelize.define(
 
     themeColor: {
       type: DataTypes.STRING,
+      defaultValue:""
     },
     themeImage: {
       type: DataTypes.STRING,
+      defaultValue:""
+
     },
     displayprofilePhoto: {
       type: DataTypes.STRING,
+      defaultValue:""
+
     },
     displayLastSeen: {
       type: DataTypes.BOOLEAN,
@@ -33,6 +38,7 @@ const SetingModel = sequelize.define(
     },
     readReceipts: {
       type: DataTypes.BOOLEAN,
+      defaultValue:true
     },
     displayGroups: {
       type: DataTypes.ENUM,
