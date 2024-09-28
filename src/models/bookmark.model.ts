@@ -1,11 +1,12 @@
-import { DataTypes } from "sequelize";
+
+  import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
-import { ConversationTpyedModel } from "../interface";
+import { BookMarkTypedModel } from "../interface";
 
 
 
-const ConversationModel = sequelize.define<ConversationTpyedModel>(
-  "Conversation",
+const BookMarkModel = sequelize.define<BookMarkTypedModel>(
+  "Bookmark",
   {
     // Model attributes are defined here
     id: {
@@ -14,6 +15,15 @@ const ConversationModel = sequelize.define<ConversationTpyedModel>(
       primaryKey: true,
       allowNull: false,
     },
+    icon: {
+        type: DataTypes.STRING,
+      },
+      title: {
+        type: DataTypes.STRING,
+      },
+      desc: {
+        type: DataTypes.STRING,
+      },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -30,10 +40,10 @@ const ConversationModel = sequelize.define<ConversationTpyedModel>(
     timestamps: true,
     freezeTableName: true,
     paranoid: true,
-    modelName: "Conversation",
+    modelName: "Bookmark",
   }
 );
 
 
 
-export default ConversationModel;
+export default BookMarkModel;

@@ -19,8 +19,8 @@ const User = sequelize.define<UserTpyedModel>(
     },
     lastName: {
       type: DataTypes.STRING,
-      // allowNull defaults to true
     },
+    location: { type: DataTypes.STRING, defaultValue: "" },
     email: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -39,6 +39,9 @@ const User = sequelize.define<UserTpyedModel>(
       },
     },
     profileImg: {
+      type: DataTypes.STRING,
+    },
+    coverImage: {
       type: DataTypes.STRING,
     },
     isVerified: {

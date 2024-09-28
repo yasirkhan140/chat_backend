@@ -12,6 +12,8 @@ interface UserAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
   profileImg?: string;
+  coverImage?: string;
+  location?: string;
 }
 interface OtpAttributes {
   id: number;
@@ -46,15 +48,30 @@ interface ConversationMessageAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
 }
+
 interface MessageAttributes {
   id: number;
-  senderId: number;
-  receiverId: number;
   message: string;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  time: Date;
+  senderId: number;
+  receiverId: number;
+  isRead: boolean;
+  send: boolean;
+  receive: boolean;
 }
+interface BookMarkAttributeTypes {
+  id: number;
+  icon: string;
+  title: string;
+  desc: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+}
+
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
 
 interface OtpCreationAttributes extends Optional<OtpAttributes, "id"> {}
@@ -69,6 +86,9 @@ interface ConversationCreationAttributes
 
 interface ConversationParticipantsCreationAttributes
   extends Optional<ConversationParticipantsnAttributes, "id"> {}
+
+interface BookMarkCreationAttributes
+  extends Optional<BookMarkAttributeTypes, "id"> {}
 
 export interface UserTpyedModel
   extends Model<UserAttributes, UserCreationAttributes>,
@@ -99,6 +119,10 @@ export interface ConversationMessageTpyedModel
       ConversationMessageCreationAttributes
     >,
     ConversationMessageAttributes {}
+
+export interface BookMarkTypedModel
+  extends Model<BookMarkAttributeTypes, BookMarkCreationAttributes>,
+    BookMarkAttributeTypes {}
 
 export interface IRequest extends Request {
   user: UserTpyedModel;

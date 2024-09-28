@@ -13,6 +13,10 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
       primaryKey: true,
       allowNull: false,
     },
+    time: {
+      type: DataTypes.DATE,
+      allowNull: false,
+    },
 
     senderId: {
       type: DataTypes.INTEGER,
@@ -30,6 +34,21 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
         key: "id",
       },
     },
+    isRead: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
+    },
+    send: {
+      type: DataTypes.BOOLEAN,
+      allowNull:false,
+      defaultValue: true,
+    },
+    receive: {
+      type: DataTypes.BOOLEAN,
+      allowNull:false,
+      defaultValue: false,
+    },
+
     message: {
       type: DataTypes.TEXT,
       allowNull: false,
@@ -54,12 +73,12 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
   }
 );
 
-MessageModel.belongsTo(User,{
-  foreignKey:"senderId",
-  as:"user"
-})
-MessageModel.belongsTo(User,{
-  foreignKey:"receiverId",
-  as:"secondUser"
-})
+MessageModel.belongsTo(User, {
+  foreignKey: "senderId",
+  as: "user",
+});
+MessageModel.belongsTo(User, {
+  foreignKey: "receiverId",
+  as: "secondUser",
+});
 export default MessageModel;
