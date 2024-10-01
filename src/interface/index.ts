@@ -14,6 +14,7 @@ interface UserAttributes {
   profileImg?: string;
   coverImage?: string;
   location?: string;
+  settings?:number
 }
 interface OtpAttributes {
   id: number;
@@ -58,15 +59,16 @@ interface MessageAttributes {
   time: Date;
   senderId: number;
   receiverId: number;
-  isRead: boolean;
-  send: boolean;
-  receive: boolean;
+  isRead?: boolean;
+  send?: boolean;
+  receive?: boolean;
 }
 interface BookMarkAttributeTypes {
   id: number;
   icon: string;
   title: string;
   desc: string;
+  user:number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;

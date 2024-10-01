@@ -30,6 +30,15 @@ const migration = {
         allowNull: false,
         defaultValue: false,
       },
+      location: { type: sequelize.STRING, defaultValue: "" },
+      profileImg: {
+        type: sequelize.STRING,
+        defaultValue: "",
+      },
+      coverImage: {
+        type: sequelize.STRING,
+        defaultValue: "",
+      },
       createdAt: {
         allowNull: false,
         type: sequelize.DATE,
@@ -37,9 +46,6 @@ const migration = {
       updatedAt: {
         allowNull: false,
         type: sequelize.DATE,
-      },
-      profileImg: {
-        type: sequelize.STRING(),
       },
       password: {
         type: sequelize.STRING(64),
@@ -51,6 +57,15 @@ const migration = {
       refreshToken: {
         type: sequelize.TEXT,
       },
+      settings:{
+        type:sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Setting",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+    },
       deletedAt: {
         type: sequelize.DATE,
       },

@@ -27,7 +27,7 @@ export const setupSocketIO = (server: http.Server) => {
     console.log("A user connected");
 
     // Example event handler for chat messages
-    socket.on(`chat message`, async (conversationId: string, msg: string) => {
+    socket.on(`chat message`, async (conversationId: string, msg: string,time:any) => {
       console.log(conversationId,msg)
       const user = (socket as any).user;
       const message = {
@@ -63,7 +63,8 @@ export const setupSocketIO = (server: http.Server) => {
       const messageSaved = await MessageModel.create({
         message: msg,
         senderId: user.id,
-        receiverId:user.id=== conversationExists.secondUser.id?conversationExists.user.id:conversationExists.secondUser.id
+        receiverId:user.id=== conversationExists.secondUser.id?conversationExists.user.id:conversationExists.secondUser.id,
+        time:time
       });
       await ConversationMessagesModel.create({
         messageId: messageSaved.id,

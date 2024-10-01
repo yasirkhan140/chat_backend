@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import {  SettingTypedModel } from "../interface";
 
-const SetingModel = sequelize.define<SettingTypedModel>(
+const SettingModel = sequelize.define<SettingTypedModel>(
   "Setting",
   {
     // Model attributes are defined here
@@ -12,14 +12,13 @@ const SetingModel = sequelize.define<SettingTypedModel>(
       primaryKey: true,
       allowNull: false,
     },
-
     themeColor: {
       type: DataTypes.STRING,
-      defaultValue:""
+      defaultValue:"bgcolor-radio1"
     },
     themeImage: {
       type: DataTypes.STRING,
-      defaultValue:""
+      defaultValue:"bgimg-radio5"
 
     },
     displayprofilePhoto: {
@@ -74,4 +73,4 @@ const SetingModel = sequelize.define<SettingTypedModel>(
   }
 );
 
-export default SetingModel;
+export default SettingModel;

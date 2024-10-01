@@ -1,4 +1,7 @@
-// profile & settings
-export const GET_PROFILE_DETAILS = "/user";
-export const GET_USER_SETTINGS = "/user-settings";
-export const UPDATE_ETTINGS = "/update-user-settings";
+import { IRouter, Router } from "express";
+import { authMiddleWare } from "../../middleware/auth.middleware";
+import { getAllsettings, updateSetting } from "../../controller/settings.controller";
+const router: IRouter = Router();
+router.get("/user-settings", authMiddleWare,getAllsettings);
+router.put("/update-user-settings", authMiddleWare,updateSetting);
+export default router;

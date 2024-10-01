@@ -1,9 +1,7 @@
-
-  import { DataTypes } from "sequelize";
+import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import { BookMarkTypedModel } from "../interface";
-
-
+import User from "./user.models";
 
 const BookMarkModel = sequelize.define<BookMarkTypedModel>(
   "Bookmark",
@@ -16,14 +14,22 @@ const BookMarkModel = sequelize.define<BookMarkTypedModel>(
       allowNull: false,
     },
     icon: {
-        type: DataTypes.STRING,
+      type: DataTypes.STRING,
+    },
+    title: {
+      type: DataTypes.STRING,
+    },
+    desc: {
+      type: DataTypes.STRING,
+    },
+    user: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references: {
+        model: User,
+        key: "id",
       },
-      title: {
-        type: DataTypes.STRING,
-      },
-      desc: {
-        type: DataTypes.STRING,
-      },
+    },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -43,7 +49,5 @@ const BookMarkModel = sequelize.define<BookMarkTypedModel>(
     modelName: "Bookmark",
   }
 );
-
-
 
 export default BookMarkModel;

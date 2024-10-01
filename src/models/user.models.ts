@@ -3,6 +3,7 @@ import { sequelize } from "../db/db";
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
 import { UserTpyedModel } from "../interface";
+import SettingModel from "./setting.model";
 
 const User = sequelize.define<UserTpyedModel>(
   "User",
@@ -40,9 +41,11 @@ const User = sequelize.define<UserTpyedModel>(
     },
     profileImg: {
       type: DataTypes.STRING,
+      defaultValue:""
     },
     coverImage: {
       type: DataTypes.STRING,
+        defaultValue:""
     },
     isVerified: {
       type: DataTypes.BOOLEAN,
@@ -51,6 +54,15 @@ const User = sequelize.define<UserTpyedModel>(
     },
     refreshToken: {
       type: DataTypes.TEXT,
+    },
+    settings:{
+        type:DataTypes.INTEGER,
+        allowNull: false,
+        references: {
+          model: SettingModel,
+          key: "id",
+        },
+        onDelete: "CASCADE",
     },
     createdAt: {
       allowNull: false,

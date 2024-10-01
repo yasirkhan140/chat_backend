@@ -27,6 +27,26 @@ const migration = {
           key: "id",
         },
       },
+      time: {
+        type: sequelize.DATE,
+        allowNull: false,
+      },
+  
+      
+      isRead: {
+        type: sequelize.BOOLEAN,
+        defaultValue: false,
+      },
+      send: {
+        type: sequelize.BOOLEAN,
+        allowNull:false,
+        defaultValue: true,
+      },
+      receive: {
+        type: sequelize.BOOLEAN,
+        allowNull:false,
+        defaultValue: false,
+      },
       message: {
         type: sequelize.TEXT,
         allowNull: false,
