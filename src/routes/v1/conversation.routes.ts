@@ -11,13 +11,13 @@ const router: IRouter = Router();
 router.post("/create-conversation", authMiddleWare, createConversation);
 router.get("/get-all-conversation", authMiddleWare, getAllConversation);
 router.get("/get-user-conversations/:id", authMiddleWare, getUserConversation);
-router.delete("/delete-conversation/:id");
-router.get("/read-message/:id");
+router.delete("/delete-conversation/:id",authMiddleWare);
+router.get("/read-message/:id",authMiddleWare);
 // delete single message
-router.delete("/delete-message/:messageId");
+router.delete("/delete-message/:messageId",authMiddleWare);
 // delelete multiple message
-router.delete("/delete-user-messages/:conversationId");
-router.delete("/user-delete-img/:messageId");
+router.delete("/delete-user-messages/:conversationId",authMiddleWare);
+router.delete("/user-delete-img/:messageId",authMiddleWare);
 export default router;
 // chats
 export const GET_FAVOURITES = "/get-favourites";

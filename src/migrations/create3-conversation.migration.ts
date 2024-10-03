@@ -11,6 +11,14 @@ const migration = {
         primaryKey: true,
         type: sequelize.INTEGER,
       },
+      deletedFrom: {
+        type: sequelize.INTEGER,
+        allowNull: true,
+        references: {
+          model: "User",
+          key: "id",
+        },
+      },
       createdAt: {
         allowNull: false,
         type: sequelize.DATE,

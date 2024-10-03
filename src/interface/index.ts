@@ -31,6 +31,7 @@ interface ConversationAttributes {
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
+  deletedFrom?:Array<number>
 }
 interface ConversationParticipantsnAttributes {
   id?: number;
