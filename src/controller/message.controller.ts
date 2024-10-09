@@ -1,0 +1,30 @@
+import { Response } from "express";
+import { IRequest, MessageTpyedModel } from "../interface";
+import { asyncHandler } from "../utils/asynHandler";
+import { ApiError } from "../utils/ApiError";
+import MessageModel from "../models/message.model";
+
+export const deleteMessage = asyncHandler(
+  async (req: IRequest, res: Response) => {
+    const messageId = req.params.messageId;
+    if (!messageId) {
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            400,
+            "Message id required",
+            "Message is not send or not get it"
+          )
+        );
+    }
+    const message: MessageTpyedModel | null = await MessageModel.findByPk(
+      messageId
+    );
+    if (!message) {
+      return res
+        .status(402)
+        .json(new ApiError(402, "message not found", "send wrong id or not"));
+    }
+  }
+);
