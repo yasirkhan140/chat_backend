@@ -3,6 +3,7 @@ import { IRequest, MessageTpyedModel } from "../interface";
 import { asyncHandler } from "../utils/asynHandler";
 import { ApiError } from "../utils/ApiError";
 import MessageModel from "../models/message.model";
+import { ApiResponse } from "../utils/ApiResponse";
 
 export const deleteMessage = asyncHandler(
   async (req: IRequest, res: Response) => {
@@ -26,5 +27,10 @@ export const deleteMessage = asyncHandler(
         .status(402)
         .json(new ApiError(402, "message not found", "send wrong id or not"));
     }
+    message.destroy();
+    message.save();
+    return res
+      .status(200)
+      .json(new ApiResponse(200, message, "Messaage delted successfully"));
   }
 );

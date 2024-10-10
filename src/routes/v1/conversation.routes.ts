@@ -5,6 +5,7 @@ import {
   getAllConversation,
   getUserConversation,
 } from "../../controller/conversation.controller";
+import { deleteMessage } from "../../controller/message.controller";
 
 const router: IRouter = Router();
 
@@ -14,7 +15,7 @@ router.get("/get-user-conversations/:id", authMiddleWare, getUserConversation);
 router.delete("/delete-conversation/:id",authMiddleWare);
 router.get("/read-message/:id",authMiddleWare);
 // delete single message
-router.delete("/delete-message/:messageId",authMiddleWare);
+router.delete("/delete-message/:messageId",authMiddleWare,deleteMessage);
 // delelete multiple message
 router.delete("/delete-user-messages/:conversationId",authMiddleWare);
 router.delete("/user-delete-img/:messageId",authMiddleWare);
