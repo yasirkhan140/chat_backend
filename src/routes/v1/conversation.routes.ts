@@ -5,19 +5,19 @@ import {
   getAllConversation,
   getUserConversation,
 } from "../../controller/conversation.controller";
-import { deleteMessage } from "../../controller/message.controller";
+import { allMessageDelete, deleteMessage } from "../../controller/message.controller";
 
 const router: IRouter = Router();
 
 router.post("/create-conversation", authMiddleWare, createConversation);
 router.get("/get-all-conversation", authMiddleWare, getAllConversation);
 router.get("/get-user-conversations/:id", authMiddleWare, getUserConversation);
-router.delete("/delete-conversation/:id",authMiddleWare);
+router.delete("/delete-conversation/:id",authMiddleWare,);
 router.get("/read-message/:id",authMiddleWare);
 // delete single message
 router.delete("/delete-message/:messageId",authMiddleWare,deleteMessage);
 // delelete multiple message
-router.delete("/delete-user-messages/:conversationId",authMiddleWare);
+router.delete("/delete-user-messages/:conversationId",authMiddleWare,allMessageDelete);
 router.delete("/user-delete-img/:messageId",authMiddleWare);
 export default router;
 // chats
@@ -27,7 +27,7 @@ export const GET_CHANNELS = "/get-channles";
 // export const ADD_CONTACTS = "/add-contact";
 export const CREATE_CHANNEL = "/create-channel";
 export const GET_CHAT_USER_DETAILS = "/get-user-details";
-export const GET_CHAT_USER_CONVERSATIONS = "/get-user-conversations";
+//export const GET_CHAT_USER_CONVERSATIONS = "/get-user-conversations";
 // export const SEND_MESSAGE = "/send-message";
 // export const RECEIVE_MESSAGE = "/receive-message";
 // export const RECEIVE_MESSAGE_FROM_USER = "/receive-message-from-user";
