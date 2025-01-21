@@ -47,6 +47,10 @@ const migration = {
         allowNull: false,
         type: sequelize.DATE,
       },
+      lastSeen:{
+        type:sequelize.DATE,
+        defaultValue: sequelize.NOW,
+      },
       password: {
         type: sequelize.STRING(64),
         validate: {

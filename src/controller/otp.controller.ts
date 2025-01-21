@@ -1,9 +1,9 @@
 import { Response } from "express";
 import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import OtpModel from "../models/otp.models";
+import {OtpModel, User} from "../models/associations"
 import { IRequest, OtpTpyedModel } from "../interface";
-import User, { generateAccessToken } from "../models/user.models";
+import { generateAccessToken } from "../models/user.models";
 import { asyncHandler } from "../utils/asynHandler";
 import { ApiResponse } from "../utils/ApiResponse";
 import generateOtp from "../utils/otpGenerate";
@@ -20,7 +20,8 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
   const token: string | undefined =
     req.cookies?.otpToken || req.header("otpToken");
   const { otp }: { otp: string } = req.body;
-  if (!otp || otp.length === 6) {
+  console.log(!otp || otp.length === 6)
+  if (!otp || otp.length !== 6) {
     return res
       .status(401)
       .json(
@@ -61,8 +62,8 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
       .json(
         new ApiError(
           401,
-          "invalid otp please enter a valid otp",
-          "otp is not valid"
+          "Please enter a valid otp",
+          "Otp is not valid"
         )
       );
   }
@@ -85,7 +86,7 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
     .cookie("refreshToken", refreshToken, options)
     .clearCookie("otpToken")
     .clearCookie("verifyUser")
-    .json(new ApiResponse(200, findOtp, "Otp verified successfully"));
+    .json(new ApiResponse(200,{...findOtp.dataValues,user}, "Otp verified successfully"));
 });
 
 export const reGenerateOtp = asyncHandler(

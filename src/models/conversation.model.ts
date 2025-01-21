@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import { ConversationTpyedModel } from "../interface";
-import User from "./user.models";
+import { User } from "./associations";
 
 const ConversationModel = sequelize.define<ConversationTpyedModel>(
   "Conversation",
@@ -12,6 +12,14 @@ const ConversationModel = sequelize.define<ConversationTpyedModel>(
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
+    },
+    title: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    isGroup: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false,
     },
     deletedFrom: {
       type: DataTypes.ARRAY(DataTypes.INTEGER),
@@ -42,4 +50,4 @@ const ConversationModel = sequelize.define<ConversationTpyedModel>(
   }
 );
 
-export default ConversationModel;
+export  {ConversationModel};

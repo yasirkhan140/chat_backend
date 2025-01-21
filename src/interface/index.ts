@@ -14,7 +14,7 @@ interface UserAttributes {
   profileImg?: string;
   coverImage?: string;
   location?: string;
-  settings?:number
+  lastSeen?:Date;
 }
 interface OtpAttributes {
   id: number;
@@ -32,12 +32,13 @@ interface ConversationAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
   deletedFrom?:Array<number>
+  title:string
+  isGroup: boolean;
 }
 interface ConversationParticipantsnAttributes {
-  id?: number;
+  id: number;
   conversationId: number;
   userId: number;
-  secondUserId: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -45,7 +46,7 @@ interface ConversationParticipantsnAttributes {
 interface ConversationMessageAttributes {
   id?: number;
   conversationId: number;
-  messageId: number;
+  userId: number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -59,17 +60,19 @@ interface MessageAttributes {
   deletedAt?: Date;
   time: Date;
   senderId: number;
-  receiverId: number;
   isRead?: boolean;
   send?: boolean;
   receive?: boolean;
+  conversationId:number;
+  attachment?:string;
 }
 interface BookMarkAttributeTypes {
   id: number;
   icon: string;
   title: string;
   desc: string;
-  user:number;
+  userId:number;
+  conversationId:number;
   createdAt?: Date;
   updatedAt?: Date;
   deletedAt?: Date;
@@ -86,19 +89,31 @@ enum Status {
 }
 interface SettingAttributesTypes {
   id: number;
-  themeColor: string;
-  themeImage: string;
-  displayprofilePhoto: string;
-  displayLastSeen: boolean;
-  displayStatus: DisplayStatus;
-  readReceipts: boolean;
-  displayGroups: DisplayStatus;
-  status: Status
-  securityNotification: boolean
+  userId:number;
+  themeColor?: string;
+  themeImage?: string;
+  displayprofilePhoto?: string;
+  displayLastSeen?: boolean;
+  displayStatus?: DisplayStatus;
+  readReceipts?: boolean;
+  displayGroups?: DisplayStatus;
+  status?: Status
+  securityNotification?: boolean
   createdAt?: Date
   updatedAt?: Date
   deletedAt?: Date
 }
+
+interface NotificationAttribute {
+  id: number;
+  message: string;
+  createdAt?: Date;
+  updatedAt?: Date;
+  deletedAt?: Date;
+  userId:number;
+  isRead: boolean;
+}
+
 
 interface UserCreationAttributes extends Optional<UserAttributes, "id"> {}
 
@@ -142,6 +157,10 @@ export interface ConversationParticipantsTpyedModel
 export interface MessageTpyedModel
   extends Model<MessageAttributes, MessageCreationAttributes>,
     MessageAttributes {}
+
+    export interface NotificationTypedModel
+    extends Model<NotificationAttribute, MessageCreationAttributes>,
+      MessageAttributes {}
 
 export interface ConversationMessageTpyedModel
   extends Model<

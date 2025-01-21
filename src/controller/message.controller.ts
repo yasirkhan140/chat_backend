@@ -2,7 +2,7 @@ import { Response } from "express";
 import { IRequest, MessageTpyedModel } from "../interface";
 import { asyncHandler } from "../utils/asynHandler";
 import { ApiError } from "../utils/ApiError";
-import MessageModel from "../models/message.model";
+import {MessageModel} from "../models/associations";
 import { ApiResponse } from "../utils/ApiResponse";
 
 export const deleteMessage = asyncHandler(

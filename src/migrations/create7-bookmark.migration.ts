@@ -13,6 +13,24 @@ const migration = {
         primaryKey: true,
         allowNull: false,
       },
+      userId: {
+        type: sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "User",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
+      conversationId: {
+        type: sequelize.INTEGER,
+        allowNull: false,
+        references: {
+          model: "Conversation",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
       icon: {
         type: sequelize.STRING,
       },

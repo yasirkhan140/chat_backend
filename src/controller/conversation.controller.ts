@@ -7,10 +7,10 @@ import {
   UserTpyedModel,
 } from "../interface";
 import { ApiError } from "../utils/ApiError";
-import ConversationModel from "../models/conversation.model";
-import ConversationParticipantsModel from "../models/conversationParticipants.model";
+import {ConversationModel,User,ConversationParticipantsModel} from "../models/associations";
+
 import { ApiResponse } from "../utils/ApiResponse";
-import User from "../models/user.models";
+
 import { Op } from "sequelize";
 //create conversation
 export const createConversation = asyncHandler(
@@ -34,7 +34,7 @@ export const createConversation = asyncHandler(
     }
     const exitsConversation: ConversationParticipantsTpyedModel | null =
       await ConversationParticipantsModel.findOne({
-        where: { userId: user.id, secondUserId: secondUserId },
+        where: { userId: user.id, },
       });
     if (exitsConversation) {
       return res
@@ -59,7 +59,6 @@ export const createConversation = asyncHandler(
     const conversationParcipants: ConversationParticipantsTpyedModel | null =
       await ConversationParticipantsModel.create({
         userId: user.id,
-        secondUserId: secondUserId[0],
         conversationId: conversationCreate.id,
       });
     if (!conversationParcipants) {
@@ -102,7 +101,7 @@ export const getAllConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
     const user = req.user;
     const allConversation = await ConversationParticipantsModel.findAll({
-      where: { [Op.or]: [{ userId: user.id }, { secondUserId: user.id }] },
+      where: { [Op.or]: [{ userId: user.id }, ] },
       include: [
         {
           model: User,
@@ -165,8 +164,7 @@ export const getUserConversation = asyncHandler(
     const allConversation = await ConversationParticipantsModel.findOne({
       where: {
         [Op.or]: [
-          { userId: user.id, secondUserId: id },
-          { secondUserId: user.id, userId: id },
+          { userId: user.id,}
         ],
       },
       include: [

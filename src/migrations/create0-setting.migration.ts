@@ -13,7 +13,10 @@ const migration = {
         primaryKey: true,
         allowNull: false,
       },
-
+userId:{
+  type:sequelize.INTEGER,
+  allowNull:false
+},
       themeColor: {
         type: sequelize.STRING,
         defaultValue: "bgcolor-radio1",
@@ -63,7 +66,8 @@ const migration = {
       },
       deletedAt: {
         type: sequelize.DATE,
-      },
+      }
+      
     });
   },
   async down(queryInterface: QueryInterface) {

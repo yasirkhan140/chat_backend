@@ -19,6 +19,14 @@ const migration = {
           key: "id",
         },
       },
+      title: {
+        type: sequelize.STRING,
+        allowNull: true,
+      },
+      isGroup: {
+        type: sequelize.BOOLEAN,
+        defaultValue: false,
+      },
       createdAt: {
         allowNull: false,
         type: sequelize.DATE,

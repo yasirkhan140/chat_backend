@@ -2,41 +2,41 @@
 import { Server as SocketIOServer, Socket } from "socket.io"; // Import from socket.io
 import http from "http";
 import { authenticateSocket } from "./authencateSocket.socket";
-import MessageModel from "../models/message.model";
-import ConversationMessagesModel from "../models/conversationMessage.model";
-import ConversationModel from "../models/conversation.model";
-import ConversationParticipantsModel from "../models/conversationParticipants.model";
-import User from "../models/user.models";
-import { ConversationParticipantsTpyedModel, ConversationTpyedModel } from "../interface";
-import { UserTpyedModel } from '../interface/index';
+import { ConversationModel, ConversationParticipantsModel, MessageModel, User} from "../models/associations";
+
+
+import {
+  ConversationParticipantsTpyedModel,
+  ConversationTpyedModel,
+} from "../interface";
+import { UserTpyedModel } from "../interface/index";
 // Import your message model
-interface IExtistsConversation extends ConversationParticipantsTpyedModel{
-  user:UserTpyedModel,
-  secondUser:UserTpyedModel,
-  conversation:ConversationTpyedModel
+interface IExtistsConversation extends ConversationParticipantsTpyedModel {
+  user: UserTpyedModel;
+  secondUser: UserTpyedModel;
+  conversation: ConversationTpyedModel;
 }
+
 export const setupSocketIO = (server: http.Server) => {
-  const io = new SocketIOServer(server,{cors: {
-    origin: "http://localhost:3000",
-    methods: ["GET", "POST"],
-    credentials: true
-  }});
+  const io = new SocketIOServer(server, {
+    cors: {
+      origin: "http://localhost:3000",
+      methods: ["GET", "POST"],
+      credentials: true,
+    },
+  });
   // Use authentication middleware for Socket.IO
   io.use(authenticateSocket);
   io.on("connection", (socket: Socket) => {
-    console.log("A user connected");
-
     // Example event handler for chat messages
-    socket.on(`chat message`, async (conversationId: string, msg: string,time:any) => {
-      console.log(conversationId,msg)
-      const user = (socket as any).user;
+    socket.on(`chat message`, async (conversationId: string, params: any) => {
+      const conversationIdInt= parseInt(conversationId)
       const message = {
-        userId: (socket as any).user.id,
         conversationId,
-        content: msg,
+        params,
       };
-      const conversationExists = await ConversationParticipantsModel.findOne({
-        where: { conversationId: parseInt(conversationId) },
+      const conversationExists = (await ConversationParticipantsModel.findOne({
+        where: { conversationId:conversationIdInt },
         include: [
           {
             model: ConversationModel,
@@ -45,32 +45,24 @@ export const setupSocketIO = (server: http.Server) => {
           {
             model: User,
             as: "user",
-            
           },
           {
             model: User,
             as: "secondUser",
-            
           },
         ],
-      }) as IExtistsConversation;
+      })) as IExtistsConversation;
 
       if (!conversationExists) {
         console.error(`Conversation with ID ${conversationId} does not exist.`);
         return;
       }
-      console.log(conversationExists.user.id,conversationExists.secondUser.id)
-      const messageSaved = await MessageModel.create({
-        message: msg,
-        senderId: user.id,
-        receiverId:user.id=== conversationExists.secondUser.id?conversationExists.user.id:conversationExists.secondUser.id,
-        time:time
+     await MessageModel.create({
+        message: params.text,
+        senderId: params.meta.sender,
+        time: params.time,
+        conversationId:conversationIdInt
       });
-      await ConversationMessagesModel.create({
-        messageId: messageSaved.id,
-        conversationId: parseInt(conversationId),
-      });
-      console.log(message);
       // Save message to the database
 
       // Emit message to all users in the conversation
@@ -80,9 +72,6 @@ export const setupSocketIO = (server: http.Server) => {
     // Handle joining a conversation
     socket.on("join conversation", (conversationId: string) => {
       socket.join(conversationId);
-      console.log(
-        `User ${(socket as any).user.id} joined conversation ${conversationId}`
-      );
     });
 
     // Handle disconnect

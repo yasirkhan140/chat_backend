@@ -5,6 +5,11 @@ import Sequelize from "sequelize";
 const migration = {
   async up(queryInterface: QueryInterface, sequelize: typeof Sequelize) {
     await queryInterface.createTable("ConversationParticipants", {
+      id:{
+        type: sequelize.INTEGER,
+        primaryKey: true,
+        autoIncrement: true,
+      },
       conversationId: {
         type: sequelize.INTEGER,
         allowNull: false,
@@ -14,14 +19,6 @@ const migration = {
         },
       },
       userId: {
-        type: sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "User",
-          key: "id",
-        },
-      },
-      secondUserId: {
         type: sequelize.INTEGER,
         allowNull: false,
         references: {

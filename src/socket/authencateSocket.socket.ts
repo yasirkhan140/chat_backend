@@ -3,7 +3,7 @@ import jwt, { JwtPayload } from "jsonwebtoken";
 import { Socket } from "socket.io";
 import { DecodedToken, UserTpyedModel } from "../interface";
 import { ExtendedError } from "socket.io/dist/namespace";
-import User from "../models/user.models";
+import {User} from "../models/associations";
 import cookie from "cookie"
 export const authenticateSocket = (socket: Socket, next: (err?: ExtendedError) => void) => {
   const cookies =socket.handshake.headers.cookie 

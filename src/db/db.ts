@@ -21,8 +21,8 @@ const connection = () => {
     .authenticate()
     .then(async () => {
       console.log("connect successfully database");
-      await sequelize.sync({ alter: true });
-      console.log("Table neccessary changes are done");
+      const sync =await sequelize.sync();
+      console.log("Table neccessary changes are done",sync);
     })
     .catch((err) => {
       console.log(`error in connecting database ${err}`);

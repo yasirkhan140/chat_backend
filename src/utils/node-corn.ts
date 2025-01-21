@@ -1,5 +1,5 @@
 import cron from "node-cron";
-import OtpModel from "../models/otp.models";
+import {OtpModel} from "../models/associations";
 import { deleteByExpire } from "../query/deleteOtp";
 const cornSheduler = () => {
   cron.schedule("*/60 * * * * *", async function () {

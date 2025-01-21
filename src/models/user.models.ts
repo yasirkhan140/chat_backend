@@ -3,8 +3,7 @@ import { sequelize } from "../db/db";
 import bcrypt from "bcrypt";
 import jwt, { Secret } from "jsonwebtoken";
 import { UserTpyedModel } from "../interface";
-import SettingModel from "./setting.model";
-
+import { SettingModel} from "./setting.model"
 const User = sequelize.define<UserTpyedModel>(
   "User",
   {
@@ -55,14 +54,9 @@ const User = sequelize.define<UserTpyedModel>(
     refreshToken: {
       type: DataTypes.TEXT,
     },
-    settings:{
-        type:DataTypes.INTEGER,
-        allowNull: false,
-        references: {
-          model: SettingModel,
-          key: "id",
-        },
-        onDelete: "CASCADE",
+    lastSeen: {
+      type: DataTypes.DATE,
+      defaultValue: DataTypes.NOW,
     },
     createdAt: {
       allowNull: false,
@@ -86,10 +80,14 @@ const User = sequelize.define<UserTpyedModel>(
     hooks: {
       async beforeCreate(user: UserTpyedModel) {
         await encrptPassword(user);
+        //await createSettings(user)
       },
       async beforeUpdate(user: UserTpyedModel) {
         await encrptPassword(user);
       },
+      async afterCreate(user:UserTpyedModel) {
+        await createSettings(user)
+      }
     },
     defaultScope: {
       attributes: { exclude: ["password"] },
@@ -108,6 +106,13 @@ async function encrptPassword(typedUser: UserTpyedModel) {
       typedUser.get("password"),
       parseInt(process.env.HASH_ROUND_ENCRYPT as string)
     );
+  }
+}
+async function  createSettings(typedUser: UserTpyedModel) {
+  try {
+   await SettingModel.create({userId:typedUser.id})
+  } catch (error) {
+    console.log(error.message)
   }
 }
 // User.prototype.verifyPassword = async function (password: string) {
@@ -147,4 +152,5 @@ export const generateAccessToken = (
     }
   );
 };
-export default User;
+
+export  {User}

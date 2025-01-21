@@ -1,6 +1,6 @@
 import { Response } from "express";
 import { IRequest } from "../interface";
-import SettingModel from "../models/setting.model";
+import {SettingModel} from '../models/associations'
 import { ApiError } from "../utils/ApiError";
 import { asyncHandler } from "../utils/asynHandler";
 import { ApiResponse } from "../utils/ApiResponse";
@@ -9,17 +9,17 @@ export const getAllsettings = asyncHandler(
   async (req: IRequest, res: Response) => {
     const user = req.user;
     const settings = await SettingModel.findOne({
-      where: { id: user.settings },
+      where: { userId: user.id },
       attributes: { exclude: [""] },
     });
-    if (settings) {
+    if (!settings) {
       return res
         .status(400)
         .json(
           new ApiError(
             400,
-            "Email already exits enter a new email",
-            "Email is extists please login or enter a new email"
+            "Settings are not found",
+            "error in getting settings "
           )
         );
     }

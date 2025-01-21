@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import { ApiError } from "../utils/ApiError";
 import jwt, { JwtPayload } from "jsonwebtoken";
-import User from "../models/user.models";
+import {User} from "../models/associations";
 import { asyncHandler } from "../utils/asynHandler";
 import { DecodedToken, IRequest } from "../interface";
 

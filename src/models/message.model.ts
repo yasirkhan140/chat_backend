@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
-import User from "./user.models";
+import { ConversationModel } from "./conversation.model";
+import {User} from './user.models'
 import { MessageTpyedModel } from "../interface";
 
 const MessageModel = sequelize.define<MessageTpyedModel>(
@@ -12,6 +13,14 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
+    },
+    conversationId: {
+      type: DataTypes.INTEGER,
+      references: {
+        model: ConversationModel,
+        key: "id",
+      },
+      onDelete: "CASCADE",
     },
     time: {
       type: DataTypes.DATE,
@@ -25,14 +34,7 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
         model: User,
         key: "id",
       },
-    },
-    receiverId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      references: {
-        model: User,
-        key: "id",
-      },
+      onDelete:"CASCADE"
     },
     isRead: {
       type: DataTypes.BOOLEAN,
@@ -53,6 +55,11 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    attachment: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+  
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,
@@ -73,12 +80,4 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
   }
 );
 
-MessageModel.belongsTo(User, {
-  foreignKey: "senderId",
-  as: "user",
-});
-MessageModel.belongsTo(User, {
-  foreignKey: "receiverId",
-  as: "secondUser",
-});
-export default MessageModel;
+export  {MessageModel};

@@ -1,5 +1,5 @@
 import otpGenerator from "otp-generator";
-import OtpModel from "../models/otp.models";
+import {OtpModel} from "../models/associations";
 import { OtpTpyedModel } from "../interface";
 import jwt, { Secret } from "jsonwebtoken";
 import { mailSender } from "./mailerSender";

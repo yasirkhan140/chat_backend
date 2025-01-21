@@ -1,8 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import { OtpTpyedModel } from "../interface";
-import User from "./user.models";
-
+import { User } from "./associations";
 const OtpModel = sequelize.define<OtpTpyedModel>(
   "Otp",
   {
@@ -57,8 +56,6 @@ const OtpModel = sequelize.define<OtpTpyedModel>(
     },
   }
 );
-OtpModel.belongsTo(User, {
-  foreignKey: "userId",
-});
 
-export default OtpModel;
+
+export  {OtpModel};

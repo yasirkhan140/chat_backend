@@ -19,19 +19,16 @@ const migration = {
           key: "id",
         },
       },
-      receiverId: {
-        type: sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "User",
-          key: "id",
-        },
-      },
+      
       time: {
         type: sequelize.DATE,
         allowNull: false,
       },
-  
+      attachment: {
+        type: sequelize.STRING,
+        allowNull: true,
+      },
+    
       
       isRead: {
         type: sequelize.BOOLEAN,

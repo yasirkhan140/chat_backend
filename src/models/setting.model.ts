@@ -1,6 +1,7 @@
 import { DataTypes } from "sequelize";
 import { sequelize } from "../db/db";
 import {  SettingTypedModel } from "../interface";
+import { User } from "./user.models";
 
 const SettingModel = sequelize.define<SettingTypedModel>(
   "Setting",
@@ -11,6 +12,14 @@ const SettingModel = sequelize.define<SettingTypedModel>(
       autoIncrement: true,
       primaryKey: true,
       allowNull: false,
+    },
+    userId: {
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      references:{
+        model:User,
+        key:"id"
+      }
     },
     themeColor: {
       type: DataTypes.STRING,
@@ -63,7 +72,7 @@ const SettingModel = sequelize.define<SettingTypedModel>(
     },
     deletedAt: {
       type: DataTypes.DATE,
-    },
+    }
   },
   {
     timestamps: true,
@@ -72,5 +81,6 @@ const SettingModel = sequelize.define<SettingTypedModel>(
     modelName: "Setting",
   }
 );
+;
 
-export default SettingModel;
+export  {SettingModel};

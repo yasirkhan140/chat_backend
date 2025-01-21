@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
 import { asyncHandler } from "../utils/asynHandler";
-import User, {
+import  {
   generateAccessToken,
   generateRefreshToken,
   verifyPassword,
 } from "../models/user.models";
+import { User } from "../models/associations";
 import { ApiError } from "../utils/ApiError";
 import { ApiResponse } from "../utils/ApiResponse";
 import { IRequest, UserTpyedModel } from "../interface";
 import generateOtp from "../utils/otpGenerate";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
+import {SettingModel} from "../models/associations";
 // genertae acces token and refresh  token
 interface IDecodeRefreshToken extends JwtPayload {
   id: number;
@@ -102,21 +104,24 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
       .json(
         new ApiError(
           400,
-          "Email already exits enter a new email",
-          "Email is extists please login or enter a new email"
+          "Email is extists please login or enter a new email",
+          "Email is extists please login "
         )
       );
   }
 
   //create user then generate otp and send a mail
-
-  const user = await User.create({ firstName, lastName, email, password });
-
+  const user = await User.create({
+    firstName,
+    lastName,
+    email,
+    password,
+  });
   if (!user) {
     return res
-      .status(500)
-      .json(
-        new ApiError(
+    .status(500)
+    .json(
+      new ApiError(
           500,
           "User not created ",
           "some error occured in user creating"
@@ -202,9 +207,10 @@ export const getUser = asyncHandler(async (req: IRequest, res: Response) => {
       .status(401)
       .json(new ApiError(401, "User not found", "invalid token or user"));
   }
+  const user = await User.findOne({where:{id:req.user.id},include:SettingModel})
   return res
     .status(200)
-    .json(new ApiResponse(200, req.user, "user get successfully"));
+    .json(new ApiResponse(200, user, "user get successfully"));
 });
 
 export const updateUser = asyncHandler(async (req: IRequest, res: Response) => {
