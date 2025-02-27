@@ -28,7 +28,14 @@ const migration = {
         type: sequelize.STRING,
         allowNull: true,
       },
-    
+      conversationId: {
+        type: sequelize.INTEGER,
+        references: {
+          model: "Conversations",
+          key: "id",
+        },
+        onDelete: "CASCADE",
+      },
       
       isRead: {
         type: sequelize.BOOLEAN,
