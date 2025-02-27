@@ -61,15 +61,7 @@ const migration = {
       refreshToken: {
         type: sequelize.TEXT,
       },
-      settings:{
-        type:sequelize.INTEGER,
-        allowNull: false,
-        references: {
-          model: "Setting",
-          key: "id",
-        },
-        onDelete: "CASCADE",
-    },
+      
       deletedAt: {
         type: sequelize.DATE,
       },

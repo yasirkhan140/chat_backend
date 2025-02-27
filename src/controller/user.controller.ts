@@ -136,6 +136,20 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
       .json(new ApiError(500, "some error ocurred in otp generation", otp));
   }
   const userToken = generateAccessToken(user.id, user.email, user.firstName);
+  const newUser = await User.findByPk(user.id,{include:SettingModel});
+  if(!newUser){
+    await user.destroy({force:true})
+    await SettingModel.destroy({where:{userId:user.id},force:true})
+    return res
+    .status(500)
+    .json(
+      new ApiError(
+          500,
+          "Some error occured in user getting after creating",
+          "some error occured in user creating"
+        )
+      );
+  }
   return res
     .status(201)
     .cookie("otpToken", otp.otpToken, options)
@@ -143,7 +157,7 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
     .json(
       new ApiResponse(
         201,
-        { ...user.dataValues, userToken, otp },
+        { ...newUser.dataValues, userToken, otp },
         "user created successfully"
       )
     );
