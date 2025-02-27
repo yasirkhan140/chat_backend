@@ -16,14 +16,19 @@ MessageModel.belongsTo(User, { foreignKey: "senderId" });
 ConversationModel.belongsToMany(User, {
   through: ConversationParticipantsModel,
   foreignKey: "conversationId",
+  as:"participants"
 });
 User.belongsToMany(ConversationModel, {
   through: ConversationParticipantsModel,
   foreignKey: "userId",
+  as:"conversations"
 });
 
 User.hasOne(SettingModel, { foreignKey: "userId" });
 SettingModel.belongsTo(User, { foreignKey: "userId" });
+
+User.hasMany(ConversationParticipantsModel, { foreignKey: "userId" });
+ConversationParticipantsModel.belongsTo(User, { foreignKey: "userId" });
 
 User.hasMany(NotificationModel, { foreignKey: "userId" });
 NotificationModel.belongsTo(User, { foreignKey: "userId" });
@@ -34,6 +39,10 @@ User.hasMany(BookMarkModel, { foreignKey: "userId" });
 // Bookmark belongs to a Conversation
 BookMarkModel.belongsTo(ConversationModel, { foreignKey: "conversationId" });
 ConversationModel.hasMany(BookMarkModel, { foreignKey: "conversationId" });
+
+ConversationModel.hasMany(ConversationParticipantsModel, { foreignKey: "conversationId" });
+ConversationParticipantsModel.belongsTo(ConversationModel, { foreignKey: "conversationId" });
+
 export {
   User,
   ConversationModel,

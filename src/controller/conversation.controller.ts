@@ -7,7 +7,11 @@ import {
   UserTpyedModel,
 } from "../interface";
 import { ApiError } from "../utils/ApiError";
-import {ConversationModel,User,ConversationParticipantsModel} from "../models/associations";
+import {
+  ConversationModel,
+  User,
+  ConversationParticipantsModel,
+} from "../models/associations";
 
 import { ApiResponse } from "../utils/ApiResponse";
 
@@ -15,40 +19,88 @@ import { Op } from "sequelize";
 //create conversation
 export const createConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
-    const { secondUserId }: { secondUserId: Array<number> | null } = req.body;
+    const {
+      secondUserId,
+      isGroup,
+      groupTitle,
+    }: {
+      secondUserId: Array<number> | null;
+      isGroup: boolean | null;
+      groupTitle: string | null;
+    } = req.body;
     const user = req.user;
     if (!secondUserId) {
       return res
         .status(401)
         .json(
-          new ApiError(401, "Second user id is required", "id is compulsory")
+          new ApiError(401, "users/user id is required", "id is compulsory")
         );
     }
-    const userisExitsorNot: UserTpyedModel | null = await User.findByPk(
-      secondUserId[0]
+    const usersExist = await User.findAll({
+      where: {
+        id: secondUserId, // Find all users with these IDs
+      },
+    });
+    const foundUserIds = usersExist.map((user) => user.id); // Extract found user IDs
+    // Compare found users with requested users
+    const missingUsers = secondUserId.filter(
+      (id) => !foundUserIds.includes(id)
     );
-    if (!userisExitsorNot) {
+    if (missingUsers.length > 0) {
       return res
-        .status(401)
-        .json(new ApiError(401, "user is not exits", "user/id is not exits"));
-    }
-    const exitsConversation: ConversationParticipantsTpyedModel | null =
-      await ConversationParticipantsModel.findOne({
-        where: { userId: user.id, },
-      });
-    if (exitsConversation) {
-      return res
-        .status(401)
+        .status(404)
         .json(
           new ApiError(
-            401,
-            "conversation is already exits",
-            "conversation/chat is already created"
+            404,
+            `Users not found: ${missingUsers.join(", ")}`,
+            "Some users do not exist"
+          )
+        );
+    }
+    // const samuser = secondUserId.filter(
+    //   (id) => user.id===id);
+    // if (samuser.length > 0) {
+    //   return res
+    //     .status(401)
+    //     .json(
+    //       new ApiError(
+    //         401,
+    //         "Smame user id is not allowed",
+    //         "Same user id is not allowed"
+    //       )
+    //     );
+    // }
+    const existingConversation: ConversationTpyedModel | null =
+      await ConversationModel.findOne({
+        include: {
+          model: ConversationParticipantsModel,
+          where: {
+            userId: secondUserId,
+          },
+          include: [
+            {
+              model: User, // Include user details
+              attributes: ["id", "firstName", "lastName"],
+            },
+          ],
+        },
+      });
+    if (existingConversation) {
+      return res
+        .status(200)
+        .json(
+          new ApiResponse(
+            200,
+            existingConversation,
+            "conversation is already exits"
           )
         );
     }
     const conversationCreate: ConversationTpyedModel | null =
-      await ConversationModel.create();
+      await ConversationModel.create({
+        isGroup: isGroup || false,
+        title: isGroup ? groupTitle : "null",
+      });
     if (!conversationCreate) {
       return res
         .status(500)
@@ -56,11 +108,12 @@ export const createConversation = asyncHandler(
           new ApiError(500, "some error occured.", "conversation create error")
         );
     }
-    const conversationParcipants: ConversationParticipantsTpyedModel | null =
-      await ConversationParticipantsModel.create({
-        userId: user.id,
-        conversationId: conversationCreate.id,
-      });
+    const participants = [user.id, ...secondUserId].map((id) => ({
+      userId: id,
+      conversationId: conversationCreate.id,
+    }));
+    const conversationParcipants: Array<ConversationParticipantsTpyedModel> | null =
+      await ConversationParticipantsModel.bulkCreate(participants);
     if (!conversationParcipants) {
       return res
         .status(500)
@@ -72,26 +125,44 @@ export const createConversation = asyncHandler(
           )
         );
     }
-    const converstion: ConversationParticipantsTpyedModel | null =
-      await ConversationParticipantsModel.findOne({
-        where: { id: conversationParcipants.id },
-        include: { model: ConversationModel, as: "conversation" },
-      });
-    if (!converstion) {
-      return res
-        .status(500)
-        .json(
-          new ApiError(
-            500,
-            "some error occured",
-            "error occured in conversation participants fetch"
-          )
-        );
-    }
+    // const converstion: ConversationParticipantsTpyedModel | null =
+    //   await ConversationParticipantsModel.findOne({
+    //     where: { id: conversationParcipants.id },
+    //     include: { model: ConversationModel, as: "conversation" },
+    //   });
+    // if (!converstion) {
+    //   return res
+    //     .status(500)
+    //     .json(
+    //       new ApiError(
+    //         500,
+    //         "some error occured",
+    //         "error occured in conversation participants fetch"
+    //       )
+    //     );
+    // }
+    const allConversations = await ConversationModel.findByPk(
+      conversationCreate.id,
+      {
+        include: {
+          model: ConversationParticipantsModel,
+          include: [
+            {
+              model: User, // Include user details
+              attributes: ["id", "firstName", "lastName"],
+            },
+          ],
+        },
+      }
+    );
     return res
       .status(200)
       .json(
-        new ApiResponse(200, converstion, "conversation created successfully")
+        new ApiResponse(
+          200,
+          allConversations,
+          "conversation created successfully"
+        )
       );
   }
 );
@@ -100,38 +171,18 @@ export const createConversation = asyncHandler(
 export const getAllConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
     const user = req.user;
-    const allConversation = await ConversationParticipantsModel.findAll({
-      where: { [Op.or]: [{ userId: user.id }, ] },
+    const allConversation = await ConversationModel.findAll({
       include: [
         {
-          model: User,
-          as: "user",
-          attributes: {
-            exclude: [
-              "createdAt",
-              "updatedAt",
-              "deletedAt",
-              "refreshToken",
-              "isVerified",
-              "password",
-              "email",
-            ],
-          },
+          model: ConversationParticipantsModel,
+          where: { userId: user.id },
+          attributes: [], // Exclude pivot table fields
         },
         {
           model: User,
-          as: "secondUser",
-          attributes: {
-            exclude: [
-              "createdAt",
-              "updatedAt",
-              "deletedAt",
-              "refreshToken",
-              "isVerified",
-              "password",
-              "email",
-            ],
-          },
+          as: "participants",
+          attributes: ["firstName", "lastName", "id"],
+          through: { attributes: [] }, // Exclude join table attributes
         },
       ],
     });
@@ -141,8 +192,8 @@ export const getAllConversation = asyncHandler(
         .json(
           new ApiError(
             500,
-            "some error occured",
-            "error in fetching conversation"
+            "no conversation found",
+            "You dont have any conversation"
           )
         );
     }
@@ -161,42 +212,22 @@ export const getUserConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
     const id = req.params.id;
     const user = req.user;
-    const allConversation = await ConversationParticipantsModel.findOne({
-      where: {
-        [Op.or]: [
-          { userId: user.id,}
-        ],
-      },
+    const allConversation = await ConversationModel.findAll({
       include: [
         {
-          model: User,
-          as: "user",
-          attributes: {
-            exclude: [
-              "createdAt",
-              "updatedAt",
-              "deletedAt",
-              "refreshToken",
-              "isVerified",
-              "password",
-              "email",
-            ],
+          model: ConversationParticipantsModel,
+          where: {
+            userId: {
+              [Op.in]: [user.id, id],
+            },
           },
+          attributes: [], // Exclude pivot table fields
         },
         {
           model: User,
-          as: "secondUser",
-          attributes: {
-            exclude: [
-              "createdAt",
-              "updatedAt",
-              "deletedAt",
-              "refreshToken",
-              "isVerified",
-              "password",
-              "email",
-            ],
-          },
+          as: "participants",
+          attributes: ["firstName", "lastName", "id"],
+          through: { attributes: [] }, // Exclude join table attributes
         },
       ],
     });

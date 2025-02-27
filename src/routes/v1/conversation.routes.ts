@@ -11,7 +11,7 @@ const router: IRouter = Router();
 
 router.post("/create-conversation", authMiddleWare, createConversation);
 router.get("/get-all-conversation", authMiddleWare, getAllConversation);
-router.get("/get-user-conversations/:id", authMiddleWare, getUserConversation);
+router.get("/get-user-conversation/:id", authMiddleWare, getUserConversation);
 router.delete("/delete-conversation/:id",authMiddleWare,);
 router.get("/read-message/:id",authMiddleWare);
 // delete single message

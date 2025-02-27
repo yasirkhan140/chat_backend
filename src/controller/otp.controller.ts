@@ -20,7 +20,6 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
   const token: string | undefined =
     req.cookies?.otpToken || req.header("otpToken");
   const { otp }: { otp: string } = req.body;
-  console.log(!otp || otp.length === 6)
   if (!otp || otp.length !== 6) {
     return res
       .status(401)
@@ -38,7 +37,7 @@ export const verifyOtp = asyncHandler(async (req: IRequest, res: Response) => {
       .json(
         new ApiError(
           401,
-          "Invalid token or invalid opt",
+          "Invalid token or invalid otp",
           "Please enter a valid otp"
         )
       );

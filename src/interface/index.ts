@@ -32,7 +32,7 @@ interface ConversationAttributes {
   updatedAt?: Date;
   deletedAt?: Date;
   deletedFrom?:Array<number>
-  title:string
+  title:string|null
   isGroup: boolean;
 }
 interface ConversationParticipantsnAttributes {
