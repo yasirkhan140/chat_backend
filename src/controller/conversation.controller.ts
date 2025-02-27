@@ -208,28 +208,22 @@ export const getAllConversation = asyncHandler(
       );
   }
 );
+//resolve this issue
+// get user conversation
 export const getUserConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
     const id = req.params.id;
-    const user = req.user;
-    const allConversation = await ConversationModel.findAll({
-      include: [
-        {
+    const allConversation = await ConversationModel.findOne({
+        where: {id},
+        include: {
           model: ConversationParticipantsModel,
-          where: {
-            userId: {
-              [Op.in]: [user.id, id],
+          include: [
+            {
+              model: User, // Include user details
+              attributes: ["id", "firstName", "lastName","email"],
             },
-          },
-          attributes: [], // Exclude pivot table fields
+          ],
         },
-        {
-          model: User,
-          as: "participants",
-          attributes: ["firstName", "lastName", "id"],
-          through: { attributes: [] }, // Exclude join table attributes
-        },
-      ],
     });
     if (!allConversation) {
       return res

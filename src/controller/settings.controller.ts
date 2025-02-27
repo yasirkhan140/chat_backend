@@ -31,8 +31,35 @@ export const getAllsettings = asyncHandler(
 
 export const updateSetting = asyncHandler(
   async (req: IRequest, res: Response) => {
+    const user = req.user;
+    const settings = await SettingModel.findOne({
+      where: { userId: user.id },
+    });
+    if (!settings) {
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            400,
+            "Settings are not found",
+            "error in getting settings "
+          )
+        );
+    }
+    const updatedSettings = await settings.update(req.body);
+    if (!updatedSettings) {
+      return res
+        .status(400)
+        .json(
+          new ApiError(
+            400,
+            "Settings are not updated",
+            "error in updating settings "
+          )
+        );
+    }
     return res
       .status(200)
-      .json(new ApiResponse(200, "we are working on it ", "model is working"));
+      .json(new ApiResponse(200, updatedSettings, "model is working"));
   }
 );
