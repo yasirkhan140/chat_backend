@@ -65,6 +65,7 @@ interface MessageAttributes {
   receive?: boolean;
   conversationId:number;
   attachment?:string;
+  delete?:Array<number>
 }
 interface BookMarkAttributeTypes {
   id: number;

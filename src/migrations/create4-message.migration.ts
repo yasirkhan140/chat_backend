@@ -31,7 +31,7 @@ const migration = {
       conversationId: {
         type: sequelize.INTEGER,
         references: {
-          model: "Conversations",
+          model: "Conversation",
           key: "id",
         },
         onDelete: "CASCADE",
@@ -55,6 +55,16 @@ const migration = {
         type: sequelize.TEXT,
         allowNull: false,
       },
+      delete:{
+        type:sequelize.ARRAY(sequelize.INTEGER),
+            allowNull:true,
+            defaultValue:[],
+            references: {
+              model: "User",
+              key: "id",
+            },
+            onDelete:"CASCADE"
+          },
       createdAt: {
         allowNull: false,
         type: sequelize.DATE,

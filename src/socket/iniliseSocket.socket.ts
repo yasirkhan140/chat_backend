@@ -2,12 +2,17 @@
 import { Server as SocketIOServer, Socket } from "socket.io"; // Import from socket.io
 import http from "http";
 import { authenticateSocket } from "./authencateSocket.socket";
-import { ConversationModel, ConversationParticipantsModel, MessageModel, User} from "../models/associations";
-
+import {
+  ConversationModel,
+  ConversationParticipantsModel,
+  MessageModel,
+  User,
+} from "../models/associations";
 
 import {
   ConversationParticipantsTpyedModel,
   ConversationTpyedModel,
+  MessageTpyedModel,
 } from "../interface";
 import { UserTpyedModel } from "../interface/index";
 // Import your message model
@@ -21,7 +26,7 @@ export const setupSocketIO = (server: http.Server) => {
   const io = new SocketIOServer(server, {
     cors: {
       origin: "http://localhost:3000",
-      methods: ["GET", "POST"],
+      methods: ["GET", "POST", "PUT", "DELETE"],
       credentials: true,
     },
   });
@@ -29,46 +34,77 @@ export const setupSocketIO = (server: http.Server) => {
   io.use(authenticateSocket);
   io.on("connection", (socket: Socket) => {
     // Example event handler for chat messages
-    socket.on(`chat message`, async (conversationId: string, params: any) => {
-      const conversationIdInt= parseInt(conversationId)
+    socket.on(`send message`, async (conversationId: string, params: any) => {
+      const conversationIdInt = parseInt(conversationId);
       const message = {
         conversationId,
         params,
       };
-      const conversationExists = (await ConversationParticipantsModel.findOne({
-        where: { conversationId:conversationIdInt },
-        include: [
-          {
-            model: ConversationModel,
-            as: "conversation",
-          },
-          {
-            model: User,
-            as: "user",
-          },
-          {
-            model: User,
-            as: "secondUser",
-          },
-        ],
-      })) as IExtistsConversation;
+      const conversationExists = await ConversationModel.findOne({
+        where: { id: conversationIdInt },
+      });
 
       if (!conversationExists) {
-        console.error(`Conversation with ID ${conversationId} does not exist.`);
+        socket.emit("error", "Conversation does not exist");
         return;
       }
-     await MessageModel.create({
-        message: params.text,
-        senderId: params.meta.sender,
-        time: params.time,
-        conversationId:conversationIdInt
-      });
       // Save message to the database
+      const savedMessage = await MessageModel.create({
+        conversationId: conversationIdInt,
+        message: params.message,
+        senderId: params.senderId,
+        attachment: params.attachment || null,
+        time: new Date(),
+      });
+      savedMessage.send = true;
+      savedMessage.save();
 
       // Emit message to all users in the conversation
       io.to(conversationId).emit("recieved message", message);
     });
-
+    // Handle reading a message
+    socket.on(`read message`, async (conversationId: string, params: any) => {
+      const conversationIdInt = parseInt(conversationId);
+      const conversationExists = await ConversationModel.findOne({
+        where: { id: conversationIdInt },
+      });
+      if (!conversationExists) {
+        socket.emit("error", "Conversation does not exist");
+        return;
+      }
+      const messages = await MessageModel.findAll({
+        where: { conversationId: conversationIdInt },
+      });
+      messages.forEach(async (message) => {
+        message.isRead = true;
+        message.receive = true;
+        message.save();
+      });
+      // Emit message to all users in the conversation
+      io.to(conversationId).emit("read message", params);
+    });
+    // Handle delete a message
+    socket.on(`delete message`, async (conversationId: string, params: any) => {
+      const conversationIdInt = parseInt(conversationId);
+      const conversationExists = await ConversationModel.findOne({
+        where: { id: conversationIdInt },
+      });
+      if (!conversationExists) {
+        socket.emit("error", "Conversation does not exist");
+        return;
+      }
+      const message = await MessageModel.findOne({
+        where: { id: params.messageId },
+      });
+      if (!message) {
+        socket.emit("error", "Message does not exist");
+        return;
+      }
+      message.destroy();
+      message.save();
+      // Emit message to all users in the conversation
+      io.to(conversationId).emit("delete message", params);
+    });
     // Handle joining a conversation
     socket.on("join conversation", (conversationId: string) => {
       socket.join(conversationId);

@@ -54,12 +54,21 @@ const MessageModel = sequelize.define<MessageTpyedModel>(
     message: {
       type: DataTypes.TEXT,
       allowNull: false,
+      defaultValue: []
     },
     attachment: {
       type: DataTypes.STRING,
       allowNull: true,
     },
-  
+  delete:{
+type:DataTypes.ARRAY(DataTypes.INTEGER),
+    allowNull:true,
+    references: {
+      model: User,
+      key: "id",
+    },
+    onDelete:"CASCADE"
+  },
     createdAt: {
       allowNull: false,
       type: DataTypes.DATE,

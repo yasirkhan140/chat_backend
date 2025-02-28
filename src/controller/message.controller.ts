@@ -47,30 +47,31 @@ export const sendMessage = asyncHandler(
 );
 export const readMessage = asyncHandler(
   async (req: IRequest, res: Response) => {
-    const {messageIds}:{messageIds: Array<number>} = req.body;
-    if (messageIds.length>0) {
+    const {conversationId}:{conversationId: number} = req.body;
+    if (!conversationId) {
       return res
         .status(400)
         .json(
           new ApiError(
             400,
-            "Message id required",
-            "Message is not send or not get it"
+            "Conversation id required",
+            "ConversationId is not send or not get it"
           )
         );
     }
     const messages: Array<MessageTpyedModel>| null = await MessageModel.findAll({
       where:{
-      id:messageIds
+      conversationId,
     }
   });
     if (!messages) {
       return res
         .status(402)
-        .json(new ApiError(402, "message not found", "send wrong id or not"));
+        .json(new ApiError(402, "messages not found", "send wrong id or not"));
     }
-    messages.forEach((message)=>{
-      message.isRead=true;
+    messages.forEach((message) => {
+      message.isRead = true;
+      message.receive = true;
       message.save();
     });
     return res

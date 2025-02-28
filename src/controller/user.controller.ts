@@ -12,6 +12,7 @@ import { IRequest, UserTpyedModel } from "../interface";
 import generateOtp from "../utils/otpGenerate";
 import jwt, { JwtPayload, Secret } from "jsonwebtoken";
 import {SettingModel} from "../models/associations";
+import deletePrevousOtp from "../utils/deletePrevousOtp";
 // genertae acces token and refresh  token
 interface IDecodeRefreshToken extends JwtPayload {
   id: number;
@@ -128,6 +129,7 @@ export const createUser = asyncHandler(async (req: Request, res: Response) => {
         )
       );
   }
+  deletePrevousOtp();
   const otp = await generateOtp(user.id, user.email);
   if (!otp || otp.message || !otp.otpToken) {
     await user.destroy({ force: true });
