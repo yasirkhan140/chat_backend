@@ -4,15 +4,12 @@ import http from "http";
 import { authenticateSocket } from "./authencateSocket.socket";
 import {
   ConversationModel,
-  ConversationParticipantsModel,
   MessageModel,
-  User,
 } from "../models/associations";
 
 import {
   ConversationParticipantsTpyedModel,
   ConversationTpyedModel,
-  MessageTpyedModel,
 } from "../interface";
 import { UserTpyedModel } from "../interface/index";
 // Import your message model

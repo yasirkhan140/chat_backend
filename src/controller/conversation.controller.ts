@@ -4,7 +4,6 @@ import {
   ConversationParticipantsTpyedModel,
   ConversationTpyedModel,
   IRequest,
-  UserTpyedModel,
 } from "../interface";
 import { ApiError } from "../utils/ApiError";
 import {
@@ -14,8 +13,6 @@ import {
 } from "../models/associations";
 
 import { ApiResponse } from "../utils/ApiResponse";
-
-import { Op } from "sequelize";
 //create conversation
 export const createConversation = asyncHandler(
   async (req: IRequest, res: Response) => {
